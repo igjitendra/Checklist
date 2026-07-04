@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://checklist.example.com/sitemap-index.xml
+Sitemap: https://checklist.example.com/sitemap.xml
