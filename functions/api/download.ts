@@ -1,13 +1,13 @@
 // Cloudflare Pages Function: POST /api/download
 // 1) Verifies Cloudflare Turnstile token (bot protection)
-// 2) Logs the lead to a Google Sheet (via Google Apps Script webhook)
-// 3) Returns a one-time download URL for the gated template file (from R2)
+// 2) Logs the lead (incl. WhatsApp) to a Google Sheet (via Apps Script webhook)
+// 3) Returns a short-lived signed URL to /api/file for the chosen format (pdf|jpg)
 //
-// Bindings & env vars to set in Cloudflare Pages dashboard:
-//   TEMPLATES        -> R2 bucket binding holding your private template files
-//   TURNSTILE_SECRET -> Turnstile secret key (server-side)
-//   GSHEET_WEBHOOK   -> Google Apps Script Web App URL (logs leads to your sheet)
-//   PUBLIC_BASE      -> your site origin, e.g. https://checklist.example.com
+// Bindings & env vars (Cloudflare Pages dashboard):
+//   TEMPLATES        -> R2 bucket binding (holds "<fileBase>.pdf" and "<fileBase>.jpg")
+//   TURNSTILE_SECRET -> Turnstile secret key
+//   GSHEET_WEBHOOK   -> Google Apps Script Web App URL
+//   PUBLIC_BASE      -> site origin, e.g. https://checklist.example.com
 
 interface Env {
   TEMPLATES: R2Bucket;
@@ -17,92 +17,60 @@ interface Env {
 }
 
 const json = (data: unknown, status = 200) =>
-  new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json' },
-  });
+  new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
 
   let body: any;
-  try {
-    body = await request.json();
-  } catch {
-    return json({ error: 'Invalid request.' }, 400);
-  }
+  try { body = await request.json(); } catch { return json({ error: 'Invalid request.' }, 400); }
 
-  const { name, email, purpose, fileKey, template, turnstile } = body || {};
-  if (!name || !email || !fileKey) {
-    return json({ error: 'Name, email and file are required.' }, 400);
-  }
-  // basic email sanity check
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-    return json({ error: 'Please enter a valid email.' }, 400);
-  }
+  const { name, email, whatsapp, purpose, fileBase, template, turnstile } = body || {};
+  const format = (body?.format === 'jpg' ? 'jpg' : 'pdf');
+  if (!name || !email || !whatsapp || !fileBase) return json({ error: 'Name, email, WhatsApp and template are required.' }, 400);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json({ error: 'Please enter a valid email.' }, 400);
+  if ((String(whatsapp).replace(/\D/g, '')).length < 8) return json({ error: 'Please enter a valid WhatsApp number.' }, 400);
 
-  // 1) Verify Turnstile (skip only if not configured)
+  const fileKey = `${fileBase}.${format}`;
+
+  // 1) Verify Turnstile
   if (env.TURNSTILE_SECRET) {
     const form = new FormData();
     form.append('secret', env.TURNSTILE_SECRET);
     form.append('response', turnstile || '');
     const ip = request.headers.get('CF-Connecting-IP');
     if (ip) form.append('remoteip', ip);
-    const verify = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      body: form,
-    });
+    const verify = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: form });
     const outcome: any = await verify.json();
-    if (!outcome.success) {
-      return json({ error: 'Bot verification failed. Please try again.' }, 403);
-    }
+    if (!outcome.success) return json({ error: 'Bot verification failed. Please try again.' }, 403);
   }
 
-  // 2) Log lead to Google Sheet (non-blocking failure is tolerated)
+  // 2) Log lead to Google Sheet
   if (env.GSHEET_WEBHOOK) {
     try {
       await fetch(env.GSHEET_WEBHOOK, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name,
-          email,
-          purpose: purpose || '',
-          template: template || fileKey,
-          fileKey,
-          date: new Date().toISOString(),
+          name, email, whatsapp, purpose: purpose || '', template: template || fileBase,
+          fileKey, format, date: new Date().toISOString(),
           ip: request.headers.get('CF-Connecting-IP') || '',
         }),
       });
-    } catch (e) {
-      // Do not block the download if logging fails; you may log to console.
-      console.error('Sheet log failed', e);
-    }
+    } catch (e) { console.error('Sheet log failed', e); }
   }
 
-  // 3) Serve the gated file from R2 via a short-lived signed link (our own token route)
-  // We create a signed, expiring token and return a URL to /api/file that streams it.
+  // 3) Signed, expiring link to /api/file
   const exp = Date.now() + 5 * 60 * 1000; // 5 minutes
   const token = await sign(`${fileKey}:${exp}`, env.TURNSTILE_SECRET || 'dev-secret');
   const base = env.PUBLIC_BASE || new URL(request.url).origin;
   const url = `${base}/api/file?key=${encodeURIComponent(fileKey)}&exp=${exp}&sig=${token}`;
-
   return json({ url });
 };
 
-// Simple HMAC-SHA256 signing using Web Crypto (available in Workers runtime)
 async function sign(data: string, secret: string): Promise<string> {
   const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    'raw',
-    enc.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign'],
-  );
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const sigBuf = await crypto.subtle.sign('HMAC', key, enc.encode(data));
-  return btoa(String.fromCharCode(...new Uint8Array(sigBuf)))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+  return btoa(String.fromCharCode(...new Uint8Array(sigBuf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
