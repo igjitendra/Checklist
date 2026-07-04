@@ -1,14 +1,27 @@
 ---
 import { site } from '../config/site';
+import Icon from './Icon.astro';
 ---
 <header class="nav">
   <div class="container nav-inner">
-    <a href="/" class="logo"><span class="box">{site.logoEmoji}</span> {site.name}</a>
+    <a href="/" class="logo"><span class="box"><Icon name="check" size={18} sw={3} /></span> {site.name}</a>
     <nav class="nav-links">
-      <a href="/maker" class="hide-sm">Template Maker</a>
-      <a href="/templates" class="hide-sm">Templates</a>
-      <a href="/blog" class="hide-sm">Blog</a>
-      <a href="/maker" class="btn btn-primary btn-sm">Make a Checklist</a>
+      <a href="/maker" class="navlink hide-sm"><Icon name="maker" size={17} /> <span data-i18n="nav_maker">Template Maker</span></a>
+      <a href="/templates" class="navlink hide-sm"><Icon name="template" size={17} /> <span data-i18n="nav_templates">Templates</span></a>
+      <a href="/blog" class="navlink hide-sm"><Icon name="book" size={17} /> <span data-i18n="nav_blog">Blog</span></a>
+      <div class="nav-tools">
+        <div class="lang-select">
+          <span class="gi"><Icon name="globe" size={16} /></span>
+          <select id="langSelect" aria-label="Language"><option value="en">English</option></select>
+          <span class="ci"><Icon name="up" size={12} class="flip" /></span>
+        </div>
+        <button class="icon-btn2" id="themeToggle" aria-label="Toggle theme">
+          <span id="iconMoon"><Icon name="moon" size={18} /></span>
+          <span id="iconSun" style="display:none"><Icon name="sun" size={18} /></span>
+        </button>
+        <a href="/maker" class="btn btn-primary btn-sm"><Icon name="maker" size={16} /> <span data-i18n="nav_make">Make a Checklist</span></a>
+      </div>
     </nav>
   </div>
 </header>
+<style>.lang-select .flip{transform:rotate(180deg);}</style>
