@@ -8,11 +8,15 @@ const templates = defineCollection({
     emoji: z.string().default('📋'),
     category: z.enum(['business', 'personal', 'travel', 'home', 'event', 'finance', 'health', 'seo']),
     tags: z.array(z.string()).default([]),
-    // file (R2 object key) that user downloads after filling the form
-    fileKey: z.string(),
-    // number of items (for display)
+    // Base file name (NO extension). App serves "<fileBase>.pdf" and "<fileBase>.jpg" from R2.
+    fileBase: z.string(),
+    // Public preview image (watermarked webp) shown on the template page.
+    preview: z.string(),
+    formats: z.array(z.enum(['pdf', 'jpg'])).default(['pdf', 'jpg']),
     items: z.number().default(0),
     featured: z.boolean().default(false),
+    // PRO template -> visitor must complete follow tasks (see src/config/site.ts) to unlock.
+    pro: z.boolean().default(false),
     updatedDate: z.coerce.date(),
   }),
 });
