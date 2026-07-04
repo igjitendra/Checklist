@@ -3,7 +3,7 @@
  *
  * SETUP:
  * 1. Create a Google Sheet. Add a tab named "Leads".
- *    Row 1 headers: Date | Name | Email | Purpose | Template | FileKey | IP
+ *    Row 1 headers: Date | Name | Email | WhatsApp | Purpose | Template | Format | FileKey | IP
  * 2. Extensions -> Apps Script. Paste this code.
  * 3. Deploy -> New deployment -> type "Web app".
  *    - Execute as: Me
@@ -19,8 +19,10 @@ function doPost(e) {
       data.date || new Date().toISOString(),
       data.name || '',
       data.email || '',
+      data.whatsapp || '',
       data.purpose || '',
       data.template || '',
+      data.format || '',
       data.fileKey || '',
       data.ip || ''
     ]);
