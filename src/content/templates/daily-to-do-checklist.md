@@ -4,8 +4,10 @@ description: "Plan and win your day with a simple, reusable daily to-do checklis
 emoji: "☀️"
 category: "personal"
 tags: ["productivity", "daily", "routine"]
-fileKey: "daily-to-do-checklist.pdf"
-items: 12
+fileBase: "daily-to-do-checklist"
+preview: "/templates/preview/daily-to-do-checklist.webp"
+formats: ["pdf", "jpg"]
+items: 9
 featured: true
 updatedDate: 2026-06-15
 ---

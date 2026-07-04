@@ -4,8 +4,10 @@ description: "A complete packing checklist so you never forget the essentials on
 emoji: "🌒"
 category: "travel"
 tags: ["travel", "packing", "vacation"]
-fileKey: "travel-packing-checklist.pdf"
-items: 24
+fileBase: "travel-packing-checklist"
+preview: "/templates/preview/travel-packing-checklist.webp"
+formats: ["pdf", "jpg"]
+items: 16
 featured: true
 updatedDate: 2026-06-01
 ---
@@ -22,4 +24,4 @@ Packing stress is real. This checklist breaks your trip prep into clear sections
 - **Clothing:** day-wise outfits, innerwear, footwear
 - **Extras:** snacks, water bottle, umbrella
 
-> Tip: Download the printable PDF, tick items off as you pack, and reuse it for every trip.
+> Download the printable **PDF** or a high-quality **JPG image** and tick items off as you pack.

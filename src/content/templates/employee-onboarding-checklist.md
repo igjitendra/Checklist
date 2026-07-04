@@ -4,8 +4,10 @@ description: "Give every new hire a smooth first week with this step-by-step onb
 emoji: "👤"
 category: "business"
 tags: ["hr", "onboarding", "sop"]
-fileKey: "employee-onboarding-checklist.pdf"
-items: 18
+fileBase: "employee-onboarding-checklist"
+preview: "/templates/preview/employee-onboarding-checklist.webp"
+formats: ["pdf", "jpg"]
+items: 12
 featured: true
 updatedDate: 2026-06-10
 ---

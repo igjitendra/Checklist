@@ -4,8 +4,10 @@ description: "Rank higher with a practical on-page and technical SEO checklist c
 emoji: "🚀"
 category: "seo"
 tags: ["seo", "marketing", "website"]
-fileKey: "seo-audit-checklist.pdf"
-items: 30
+fileBase: "seo-audit-checklist"
+preview: "/templates/preview/seo-audit-checklist.webp"
+formats: ["pdf", "jpg"]
+items: 12
 featured: false
 updatedDate: 2026-06-20
 ---
