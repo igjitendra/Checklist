@@ -1,4 +1,5 @@
 ---
+import { site } from '../config/site';
 // Reusable SEO head: meta tags, Open Graph, Twitter, canonical, JSON-LD
 export interface Props {
   title: string;
@@ -17,7 +18,7 @@ const {
   noindex = false,
 } = Astro.props;
 
-const siteName = 'Checklist';
+const siteName = site.name;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL(image, Astro.site).href;
 
@@ -42,7 +43,6 @@ const jsonLd = {
 <link rel="canonical" href={canonical} />
 {noindex && <meta name="robots" content="noindex,nofollow" />}
 
-<!-- Open Graph -->
 <meta property="og:type" content={type} />
 <meta property="og:site_name" content={siteName} />
 <meta property="og:title" content={title} />
@@ -50,7 +50,6 @@ const jsonLd = {
 <meta property="og:url" content={canonical} />
 <meta property="og:image" content={ogImage} />
 
-<!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />

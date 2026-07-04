@@ -1,16 +1,32 @@
 ---
+import { site } from '../config/site';
 const year = new Date().getFullYear();
+const s = site.social;
+const socials = [
+  { url: s.instagram, label: 'Instagram', icon: '📸' },
+  { url: s.whatsapp, label: 'WhatsApp', icon: '💬' },
+  { url: s.telegram, label: 'Telegram', icon: '✈️' },
+  { url: s.youtube, label: 'YouTube', icon: '▶️' },
+].filter(x => x.url);
 ---
 <footer class="footer">
   <div class="container">
     <div class="cols">
       <div>
-        <div class="logo" style="display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;"><span class="box" style="width:30px;height:30px;border-radius:8px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;">✓</span> Checklist</div>
-        <p style="max-width:280px;color:#a3a29f;">Free, professional checklist templates to organize your life &amp; work. Download, customize and get things done.</p>
+        <div class="logo" style="display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;"><span class="box" style="width:30px;height:30px;border-radius:8px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;">{site.logoEmoji}</span> {site.name}</div>
+        <p style="max-width:300px;color:#a3a29f;">{site.shortDescription}</p>
+        {socials.length > 0 && (
+          <div style="display:flex;gap:10px;margin-top:14px;">
+            {socials.map(x => (
+              <a href={x.url} target="_blank" rel="noopener" aria-label={x.label} title={x.label} style="width:38px;height:38px;border-radius:9px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;">{x.icon}</a>
+            ))}
+          </div>
+        )}
       </div>
       <div>
         <h4>Product</h4>
         <ul>
+          <li><a href="/maker">Template Maker</a></li>
           <li><a href="/templates">Templates</a></li>
           <li><a href="/blog">Blog</a></li>
           <li><a href="/about">About</a></li>
@@ -19,9 +35,9 @@ const year = new Date().getFullYear();
       <div>
         <h4>Categories</h4>
         <ul>
-          <li><a href="/templates?cat=business">Business</a></li>
-          <li><a href="/templates?cat=personal">Personal</a></li>
-          <li><a href="/templates?cat=travel">Travel</a></li>
+          <li><a href="/templates">Business</a></li>
+          <li><a href="/templates">Personal</a></li>
+          <li><a href="/templates">Travel</a></li>
         </ul>
       </div>
       <div>
@@ -33,8 +49,8 @@ const year = new Date().getFullYear();
       </div>
     </div>
     <div class="bottom">
-      <span>© {year} Checklist. All rights reserved.</span>
-      <span>Made with ❤️ for productivity.</span>
+      <span>© {year} <a href={site.credit.url}>{site.credit.text}</a>. All rights reserved.</span>
+      <span>{site.tagline}</span>
     </div>
   </div>
 </footer>

@@ -1,13 +1,14 @@
 ---
+import { site } from '../config/site';
 ---
 <header class="nav">
   <div class="container nav-inner">
-    <a href="/" class="logo"><span class="box">✓</span> Checklist</a>
+    <a href="/" class="logo"><span class="box">{site.logoEmoji}</span> {site.name}</a>
     <nav class="nav-links">
+      <a href="/maker" class="hide-sm">Template Maker</a>
       <a href="/templates" class="hide-sm">Templates</a>
       <a href="/blog" class="hide-sm">Blog</a>
-      <a href="/about" class="hide-sm">About</a>
-      <a href="/templates" class="btn btn-primary btn-sm">Browse Templates</a>
+      <a href="/maker" class="btn btn-primary btn-sm">Make a Checklist</a>
     </nav>
   </div>
 </header>
