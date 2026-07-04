@@ -1,0 +1,212 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const faqs = [
+  { q: 'What is a checklist template maker online?', a: 'It is a free online tool that lets you create your own custom checklist template in your browser — add a title and tasks, pick a color, font and layout, and download it as a PDF or JPG. No sign-up or software needed.' },
+  { q: 'Is this checklist maker free?', a: 'Yes. You can build unlimited checklist templates online and download them free as PDF or JPG.' },
+  { q: 'Can I download my checklist as PDF and image?', a: 'Yes — export your checklist as a printable PDF or a high-quality JPG image with one click.' },
+  { q: 'Do I need an account to make a checklist?', a: 'No account or login is required. Your checklist is created right in your browser and saved locally on your device.' },
+];
+const faqJsonLd = {
+  '@context': 'https://schema.org', '@type': 'FAQPage',
+  mainEntity: faqs.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+<BaseLayout
+  title="Checklist Template Maker Online — Create & Download Free (PDF & JPG)"
+  description="Free online checklist template maker. Create your own custom checklist in your browser, choose colors, fonts and layout, and download it as a PDF or JPG image. No login needed."
+>
+  <section style="padding-top:44px;padding-bottom:20px;">
+    <div class="container">
+      <div class="center" style="max-width:720px;margin:0 auto;">
+        <span class="eyebrow">Free online tool</span>
+        <h1 style="font-size:38px;font-weight:800;margin-top:10px;">Checklist Template Maker Online</h1>
+        <p class="muted" style="font-size:18px;margin-top:12px;">Create your own checklist template online — add tasks, pick a <strong>color, font &amp; layout</strong>, and download free as a <strong>PDF</strong> or <strong>JPG image</strong>. No login, no software.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:12px;">
+    <div class="container">
+      <div class="maker">
+        <div class="editor no-print">
+          <div class="ed-card">
+            <h2 style="font-size:16px;font-weight:800;margin-bottom:14px;">Build your checklist</h2>
+            <div class="field"><label>Title</label><input id="mkTitle" type="text" value="Branding" /></div>
+            <div class="field"><label>Subtitle</label><input id="mkSub" type="text" value="Checklist" /></div>
+
+            <div class="field"><label>Accent color</label><div class="swatches" id="mkSwatches"></div></div>
+
+            <div class="field"><label>Font style</label>
+              <div class="seg-opts" id="mkFonts">
+                <button type="button" data-font="sans">Modern</button>
+                <button type="button" data-font="serif">Elegant</button>
+                <button type="button" data-font="rounded">Rounded</button>
+                <button type="button" data-font="hand">Handwritten</button>
+              </div>
+            </div>
+
+            <div class="field"><label>Layout</label>
+              <div class="seg-opts" id="mkLayout">
+                <button type="button" data-layout="one">One column</button>
+                <button type="button" data-layout="two">Two columns</button>
+              </div>
+            </div>
+
+            <div class="field"><label>Footer / brand text</label><input id="mkFooter" type="text" value="checklist" /></div>
+
+            <div class="field"><label>Tasks</label>
+              <div id="mkItems"></div>
+              <div style="display:flex;gap:8px;margin-top:8px;">
+                <input id="mkNew" type="text" placeholder="Add a task and press Enter" style="flex:1;" />
+                <button class="btn btn-primary btn-sm" id="mkAdd" type="button">Add</button>
+              </div>
+            </div>
+            <label style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;margin-top:6px;cursor:pointer;"><input type="checkbox" id="mkNotes" /> Show a “Notes” area</label>
+            <div style="display:flex;gap:10px;margin-top:18px;">
+              <button class="btn btn-ghost" id="mkPdf" type="button">🖨️ Download PDF</button>
+              <button class="btn btn-primary" id="mkJpg" type="button">⬇ Download JPG</button>
+            </div>
+            <p class="muted" style="font-size:12px;margin-top:10px;">🔒 Saved automatically in your browser.</p>
+          </div>
+        </div>
+
+        <div class="preview-col">
+          <div class="sheet" id="mkSheet" data-font="sans" data-layout="one">
+            <div class="sh-title" id="shTitle">Branding</div>
+            <div class="sh-sub" id="shSub">Checklist</div>
+            <div class="sh-underline" id="shUnderline"></div>
+            <ul class="sh-items" id="shItems"></ul>
+            <div class="sh-notes" id="shNotes" style="display:none;">
+              <div class="sh-notes-h">notes:</div>
+              <div class="sh-line"></div><div class="sh-line"></div><div class="sh-line"></div><div class="sh-line"></div>
+            </div>
+            <div class="sh-footer" id="shFooter">checklist</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--soft);">
+    <div class="container">
+      <div class="prose reveal">
+        <h2>The easiest checklist template maker online</h2>
+        <p>Our free <strong>checklist template maker online</strong> lets you design a clean, professional checklist in seconds — no design skills or software required. Type your title and tasks, choose an accent color, font and layout, then download your checklist as a printable PDF or a high-quality JPG image.</p>
+        <p>Whether you need a to-do list, packing list, SOP, branding checklist, or study plan, build it here and reuse it any time. Prefer a head start? Browse our <a href="/templates">ready-made checklist templates</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="sec-head reveal"><span class="eyebrow">FAQ</span><h2>Checklist maker — questions</h2></div>
+      <div style="max-width:760px;margin:0 auto;">
+        {faqs.map(f => (<details class="faq reveal"><summary>{f.q}</summary><p>{f.a}</p></details>))}
+      </div>
+    </div>
+  </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Kalam:wght@700&display=swap');
+    .maker{display:grid;grid-template-columns:400px 1fr;gap:36px;align-items:start;}
+    @media(max-width:860px){.maker{grid-template-columns:1fr;}}
+    .editor{position:sticky;top:84px;} @media(max-width:860px){.editor{position:static;}}
+    .ed-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;box-shadow:var(--shadow);}
+    .ed-card .field{margin-bottom:14px;} .ed-card label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+    .ed-card input[type=text]{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:15px;font-family:inherit;background:var(--soft);outline:none;}
+    .ed-card input[type=text]:focus{border-color:var(--blue);background:#fff;}
+    .swatches{display:flex;gap:8px;flex-wrap:wrap;} .sw{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid #fff;box-shadow:0 0 0 1px var(--border);} .sw.active{box-shadow:0 0 0 2px var(--ink);}
+    .seg-opts{display:flex;gap:6px;flex-wrap:wrap;} .seg-opts button{padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--soft);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--muted);} .seg-opts button.active{border-color:var(--blue);background:var(--blue-soft);color:var(--blue-dark);}
+    .mk-item{display:flex;align-items:center;gap:8px;margin-bottom:6px;} .mk-item input{flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:14px;font-family:inherit;background:var(--soft);} .mk-item button{border:none;background:none;cursor:pointer;font-size:15px;color:var(--muted);padding:4px;border-radius:6px;} .mk-item button:hover{background:var(--surface);color:var(--ink);}
+
+    .preview-col{display:flex;justify-content:center;}
+    .sheet{background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);width:100%;max-width:520px;aspect-ratio:1/1.414;padding:52px 54px;display:flex;flex-direction:column;}
+    .sheet[data-font=sans]{font-family:system-ui,Arial,sans-serif;}
+    .sheet[data-font=serif]{font-family:Georgia,'Times New Roman',serif;}
+    .sheet[data-font=rounded]{font-family:'Trebuchet MS','Segoe UI',sans-serif;}
+    .sheet[data-font=hand]{font-family:'Caveat','Kalam',cursive;}
+    .sh-title{text-align:center;font-size:52px;font-weight:800;letter-spacing:-1px;color:#222;line-height:1;word-break:break-word;}
+    .sh-sub{text-align:center;font-size:34px;font-weight:700;color:#222;margin-top:2px;}
+    .sh-underline{width:150px;height:7px;border-radius:4px;background:var(--orange);margin:14px auto 30px;}
+    .sh-items{list-style:none;margin:0;padding:0;flex:1;}
+    .sheet[data-layout=two] .sh-items{column-count:2;column-gap:34px;}
+    .sh-items li{display:flex;align-items:center;gap:14px;font-size:19px;color:#222;margin-bottom:16px;break-inside:avoid;}
+    .sh-items .box{width:22px;height:22px;border:2px solid #444;border-radius:5px;flex:none;}
+    .sh-notes{margin-top:8px;} .sh-notes-h{font-weight:700;font-size:20px;margin-bottom:12px;} .sh-line{height:1px;background:#bbb;margin:16px 0;}
+    .sh-footer{text-align:center;font-size:15px;font-weight:700;letter-spacing:1px;color:#8a8a8a;text-transform:uppercase;margin-top:14px;}
+    .faq{background:#fff;border:1px solid var(--border);border-radius:10px;padding:4px 18px;margin-bottom:10px;} .faq summary{cursor:pointer;font-weight:700;padding:14px 0;font-size:16px;list-style:none;} .faq summary::-webkit-details-marker{display:none;} .faq[open] summary{color:var(--blue);} .faq p{color:var(--muted);padding:0 0 14px;margin:0;}
+    @media print{.nav,.footer,.editor,.no-print,.eyebrow,.prose,.sec-head,.faq,section+section{display:none !important;}.sheet{box-shadow:none;border:none;max-width:none;}@page{size:A4;margin:14mm;}}
+  </style>
+
+  <script>
+    const $ = (s) => document.querySelector(s);
+    const LS = 'checklist_maker_v2';
+    const COLORS = ['#F0872C','#2783DE','#46A171','#E56458','#7C4DD1','#111111'];
+    const FONTS = { sans:'system-ui,Arial,sans-serif', serif:"Georgia,'Times New Roman',serif", rounded:"'Trebuchet MS','Segoe UI',sans-serif", hand:"'Caveat','Kalam',cursive" };
+    let state = { title:'Branding', sub:'Checklist', accent:'#F0872C', footer:'checklist', notes:false, font:'sans', layout:'one',
+      items:['Logo design','Brand colors','Typography','Brand voice','Tagline creation','Brand guidelines','Social media handles','Website design'] };
+
+    function save(){ try{ localStorage.setItem(LS, JSON.stringify(state)); }catch(e){} }
+    function load(){ try{ const d=JSON.parse(localStorage.getItem(LS)); if(d&&d.items) state=Object.assign(state,d); }catch(e){} }
+
+    function renderSwatches(){ const w=$('#mkSwatches'); w.innerHTML=''; COLORS.forEach(c=>{ const s=document.createElement('div'); s.className='sw'+(c===state.accent?' active':''); s.style.background=c; s.onclick=()=>{ state.accent=c; save(); renderAll(); }; w.appendChild(s); }); }
+    function renderSegs(){
+      document.querySelectorAll('#mkFonts button').forEach(b=>b.classList.toggle('active',b.dataset.font===state.font));
+      document.querySelectorAll('#mkLayout button').forEach(b=>b.classList.toggle('active',b.dataset.layout===state.layout));
+    }
+    function renderItemsEditor(){ const box=$('#mkItems'); box.innerHTML=''; state.items.forEach((it,i)=>{ const row=document.createElement('div'); row.className='mk-item';
+      const inp=document.createElement('input'); inp.value=it; inp.oninput=()=>{ state.items[i]=inp.value; save(); renderSheet(); };
+      const up=document.createElement('button'); up.textContent='↑'; up.onclick=()=>{ if(i>0){ [state.items[i-1],state.items[i]]=[state.items[i],state.items[i-1]]; save(); renderItemsEditor(); renderSheet(); } };
+      const del=document.createElement('button'); del.textContent='🗑️'; del.onclick=()=>{ state.items.splice(i,1); save(); renderItemsEditor(); renderSheet(); };
+      row.append(inp,up,del); box.appendChild(row); }); }
+    function renderSheet(){ const sh=$('#mkSheet');
+      sh.dataset.font=state.font; sh.dataset.layout=state.layout;
+      $('#shTitle').textContent=state.title; $('#shSub').textContent=state.sub; $('#shSub').style.display=state.sub?'block':'none';
+      $('#shUnderline').style.background=state.accent; $('#shFooter').textContent=state.footer; $('#shNotes').style.display=state.notes?'block':'none';
+      const ul=$('#shItems'); ul.innerHTML=''; state.items.forEach(it=>{ const li=document.createElement('li'); const b=document.createElement('span'); b.className='box'; b.style.borderColor=state.accent; const t=document.createElement('span'); t.textContent=it; li.append(b,t); ul.appendChild(li); }); }
+    function renderAll(){ renderSwatches(); renderSegs(); renderItemsEditor(); renderSheet();
+      $('#mkTitle').value=state.title; $('#mkSub').value=state.sub; $('#mkFooter').value=state.footer; $('#mkNotes').checked=state.notes; }
+
+    async function downloadJPG(){
+      const W=1000, H=1414, c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+      const fam=FONTS[state.font];
+      if(state.font==='hand'){ try{ await document.fonts.load(`700 96px 'Caveat'`); await document.fonts.ready; }catch(e){} }
+      x.fillStyle='#fff'; x.fillRect(0,0,W,H);
+      x.textAlign='center'; x.fillStyle='#222';
+      x.font=`800 96px ${fam}`; x.fillText(state.title||'', W/2, 150);
+      if(state.sub){ x.font=`700 62px ${fam}`; x.fillText(state.sub, W/2, 225); }
+      x.strokeStyle=state.accent; x.lineWidth=12; x.lineCap='round'; x.beginPath(); x.moveTo(W/2-150,275); x.lineTo(W/2+150,282); x.stroke();
+      x.fillStyle='#222'; x.font=`400 38px ${fam}`; x.textAlign='left';
+      const drawItem=(it,px,py,maxChars)=>{ x.strokeStyle=state.accent; x.lineWidth=3.5; x.strokeRect(px,py-26,32,32); let t=it||''; if(t.length>maxChars) t=t.slice(0,maxChars-1)+'…'; x.fillStyle='#222'; x.fillText(t,px+48,py); };
+      if(state.layout==='two'){
+        const half=Math.ceil(state.items.length/2); const left=state.items.slice(0,half), right=state.items.slice(half);
+        const gap=Math.min((H-560)/Math.max(half,1),66); let y=380;
+        left.forEach((it,i)=>drawItem(it,90,y+i*gap,20));
+        right.forEach((it,i)=>drawItem(it,540,y+i*gap,20));
+      } else {
+        const gap=Math.min((H-560)/Math.max(state.items.length,1),68); let y=380;
+        state.items.forEach((it,i)=>drawItem(it,110,y+i*gap,36));
+      }
+      x.textAlign='center'; x.fillStyle='#8a8a8a'; x.font=`700 30px ${fam}`; x.fillText((state.footer||'').toUpperCase(), W/2, H-50);
+      const a=document.createElement('a'); a.href=c.toDataURL('image/jpeg',0.95); a.download=(state.title||'checklist').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-checklist.jpg'; a.click();
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      load(); renderAll();
+      $('#mkTitle').oninput=e=>{ state.title=e.target.value; save(); renderSheet(); };
+      $('#mkSub').oninput=e=>{ state.sub=e.target.value; save(); renderSheet(); };
+      $('#mkFooter').oninput=e=>{ state.footer=e.target.value; save(); renderSheet(); };
+      $('#mkNotes').onchange=e=>{ state.notes=e.target.checked; save(); renderSheet(); };
+      document.querySelectorAll('#mkFonts button').forEach(b=>b.onclick=()=>{ state.font=b.dataset.font; save(); renderSegs(); renderSheet(); });
+      document.querySelectorAll('#mkLayout button').forEach(b=>b.onclick=()=>{ state.layout=b.dataset.layout; save(); renderSegs(); renderSheet(); });
+      const addItem=()=>{ const v=$('#mkNew').value.trim(); if(!v) return; state.items.push(v); $('#mkNew').value=''; save(); renderItemsEditor(); renderSheet(); };
+      $('#mkAdd').onclick=addItem;
+      $('#mkNew').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); addItem(); } });
+      $('#mkPdf').onclick=()=>window.print();
+      $('#mkJpg').onclick=downloadJPG;
+    });
+  </script>
+</BaseLayout>

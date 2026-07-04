@@ -7,27 +7,33 @@ const featured = templates.filter(t=>t.data.featured).slice(0,3);
 const posts = (await getCollection('blog')).filter(p=>!p.data.draft).sort((a,b)=>+b.data.pubDate - +a.data.pubDate).slice(0,3);
 
 const features = [
+  {ic:'🛠️',t:'Online checklist maker',p:'Build your own checklist template online — add tasks, pick a color, done.'},
+  {ic:'⬇️',t:'PDF & JPG download',p:'Download every checklist as a printable PDF or a high-quality image.'},
   {ic:'📋',t:'Ready-made templates',p:'Professionally designed checklists for work, home, travel and more.'},
-  {ic:'⬇️',t:'Instant download',p:'Fill a quick form and get a clean, printable PDF right away.'},
-  {ic:'🚩',t:'Priorities & due dates',p:'Focus on what matters and never miss a deadline.'},
   {ic:'📝',t:'Helpful blog',p:'Guides and tips to help you get organized and stay productive.'},
   {ic:'📱',t:'Fully responsive',p:'Looks and works beautifully on mobile, tablet and desktop.'},
   {ic:'⚡',t:'Fast & SEO-ready',p:'Built for speed and search visibility from day one.'},
 ];
+const steps = [
+  {t:'Open the maker',p:'Go to the online checklist template maker — no login needed.'},
+  {t:'Add your tasks',p:'Type your title and tasks, then pick an accent color.'},
+  {t:'Download PDF or JPG',p:'Export your checklist and print it or share the image.'},
+];
 ---
-<BaseLayout title="Checklist — Free Professional Checklist Templates" description="Download free, professionally designed checklist templates for work, travel, home and more. Organize your life and get things done.">
+<BaseLayout title="Checklist Template Maker Online — Create & Download Free Checklists (PDF & JPG)" description="Free checklist template maker online. Create your own checklist in your browser, choose a color, and download it as a PDF or JPG. Plus dozens of ready-made checklist templates.">
 
   <section class="hero" style="padding-top:80px;">
+    <span class="blob b1"></span><span class="blob b2"></span>
     <div class="container hero-grid">
       <div>
-        <span class="eyebrow">Free · No login · SEO-ready</span>
-        <h1 style="margin-top:14px;">Checklists for life and work — done right</h1>
-        <p class="lead">Download professionally designed, ready-to-use checklist templates. Fill a quick form, get a clean printable PDF, and start ticking things off.</p>
-        <div class="cta">
-          <a href="/templates" class="btn btn-primary">Browse Templates →</a>
-          <a href="/blog" class="btn btn-ghost">Read the blog</a>
+        <span class="eyebrow anim-up">Free · No login · SEO-ready</span>
+        <h1 class="anim-up a2" style="margin-top:14px;">Checklist Template Maker — Online &amp; Free</h1>
+        <p class="lead anim-up a3">Create your own checklist template online in seconds, or download ready-made ones. Add your tasks, pick a color, and export as a clean <strong>PDF or JPG</strong>.</p>
+        <div class="cta anim-up a4">
+          <a href="/maker" class="btn btn-primary">Make a Checklist →</a>
+          <a href="/templates" class="btn btn-ghost">Browse templates</a>
         </div>
-        <p class="note">✓ Free downloads &nbsp; ✓ New templates every week</p>
+        <p class="note anim-up a4">✓ Free forever &nbsp; ✓ No sign-up &nbsp; ✓ PDF &amp; JPG</p>
       </div>
       <div class="mock" aria-hidden="true">
         <div class="mtitle"><b>🌒 Travel Packing</b><span class="muted" style="font-size:13px;">3 / 5 done</span></div>
@@ -41,12 +47,39 @@ const features = [
     </div>
   </section>
 
+  <section style="padding:36px 0;">
+    <div class="container">
+      <div class="stats reveal">
+        <div class="stat"><b>50+</b><span>Templates</span></div>
+        <div class="stat"><b>2</b><span>Formats (PDF &amp; JPG)</span></div>
+        <div class="stat"><b>100%</b><span>Free</span></div>
+        <div class="stat"><b>0</b><span>Login needed</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" style="background:var(--soft);">
+    <div class="container">
+      <div class="sec-head reveal"><span class="eyebrow">How it works</span><h2>Make a checklist online in 3 steps</h2><p>Simple, fast, and completely free.</p></div>
+      <div class="steps">
+        {steps.map((s,i)=>(
+          <div class={`step reveal d${i+1}`}>
+            <div class="n">{i+1}</div>
+            <h3>{s.t}</h3>
+            <p>{s.p}</p>
+          </div>
+        ))}
+      </div>
+      <div class="center" style="margin-top:34px;"><a href="/maker" class="btn btn-primary">Open the Checklist Maker →</a></div>
+    </div>
+  </section>
+
   <section>
     <div class="container">
-      <div class="sec-head"><span class="eyebrow">Features</span><h2>Everything you need to stay organized</h2><p>Simple tools and beautiful templates to plan, track and finish what matters.</p></div>
+      <div class="sec-head reveal"><span class="eyebrow">Features</span><h2>Everything you need to stay organized</h2><p>A powerful online checklist maker plus beautiful ready-made templates.</p></div>
       <div class="grid g-3">
-        {features.map(f => (
-          <div class="card feat"><div class="ic">{f.ic}</div><h3>{f.t}</h3><p>{f.p}</p></div>
+        {features.map((f,i) => (
+          <div class={`card feat reveal d${(i%3)+1}`}><div class="ic">{f.ic}</div><h3>{f.t}</h3><p>{f.p}</p></div>
         ))}
       </div>
     </div>
@@ -54,10 +87,10 @@ const features = [
 
   <section style="background:var(--soft);">
     <div class="container">
-      <div class="sec-head"><span class="eyebrow">Templates</span><h2>Popular checklist templates</h2><p>Hand-picked templates loved by our users.</p></div>
+      <div class="sec-head reveal"><span class="eyebrow">Templates</span><h2>Popular checklist templates</h2><p>Hand-picked templates loved by our users.</p></div>
       <div class="grid g-3">
-        {featured.map(t => (
-          <a href={`/templates/${t.slug}`} class="card tpl">
+        {featured.map((t,i) => (
+          <a href={`/templates/${t.slug}`} class={`card tpl reveal d${(i%3)+1}`}>
             <div class="emoji">{t.data.emoji}</div>
             <h3>{t.data.title}</h3>
             <p>{t.data.description}</p>
@@ -71,10 +104,10 @@ const features = [
 
   <section>
     <div class="container">
-      <div class="sec-head"><span class="eyebrow">Blog</span><h2>From the blog</h2><p>Tips and guides to help you get more done.</p></div>
+      <div class="sec-head reveal"><span class="eyebrow">Blog</span><h2>From the blog</h2><p>Tips and guides to help you get more done.</p></div>
       <div class="grid g-3">
-        {posts.map(p => (
-          <a href={`/blog/${p.slug}`} class="card post">
+        {posts.map((p,i) => (
+          <a href={`/blog/${p.slug}`} class={`card post reveal d${(i%3)+1}`}>
             <div class="cover">{p.data.emoji}</div>
             <div class="body"><h3>{p.data.title}</h3><p>{p.data.description}</p><div class="date">{p.data.pubDate.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div></div>
           </a>
@@ -85,10 +118,10 @@ const features = [
 
   <section>
     <div class="container">
-      <div class="band">
-        <h2>Ready to get organized?</h2>
-        <p>Browse dozens of free checklist templates and start ticking things off today.</p>
-        <a href="/templates" class="btn btn-primary">Browse Templates →</a>
+      <div class="band reveal">
+        <h2>Ready to make your checklist?</h2>
+        <p>Use the free online checklist template maker — build it, download it, done.</p>
+        <a href="/maker" class="btn btn-primary">Make a Checklist →</a>
       </div>
     </div>
   </section>
