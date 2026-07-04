@@ -5,8 +5,17 @@ import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 
 export interface Props {
+<<<<<<< HEAD
   title: string; description: string; image?: string;
   type?: 'website' | 'article'; publishedTime?: string; noindex?: boolean;
+=======
+  title: string;
+  description: string;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  noindex?: boolean;
+>>>>>>> 84701c2dd4a31b5b83cf2c397cc9c32f7cf25b9d
 }
 const props = Astro.props;
 ---
@@ -15,6 +24,7 @@ const props = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<<<<<<< HEAD
     <meta name="theme-color" content="#2783DE" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
@@ -85,6 +95,33 @@ const props = Astro.props;
         var els=document.querySelectorAll('.reveal');
         if(!('IntersectionObserver' in window)||!els.length){ els.forEach(function(e){e.classList.add('in');}); }
         else { var io=new IntersectionObserver(function(en){en.forEach(function(x){ if(x.isIntersecting){x.target.classList.add('in'); io.unobserve(x.target);} });},{threshold:.12,rootMargin:'0px 0px -40px 0px'}); els.forEach(function(e){io.observe(e);}); }
+=======
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <SEO {...props} />
+  </head>
+  <body>
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- Scroll reveal (respects reduced-motion) -->
+    <script is:inline>
+      (function () {
+        const els = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window) || !els.length) {
+          els.forEach((e) => e.classList.add('in'));
+          return;
+        }
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((en) => {
+            if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        els.forEach((e) => io.observe(e));
+>>>>>>> 84701c2dd4a31b5b83cf2c397cc9c32f7cf25b9d
       })();
     </script>
   </body>
