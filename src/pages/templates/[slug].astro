@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DownloadForm from '../../components/DownloadForm.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const templates = await getCollection('templates');
+  return templates.map(t => ({ params: { slug: t.slug }, props: { t } }));
+}
+const { t } = Astro.props;
+const { Content } = await t.render();
+---
+<BaseLayout
+  title={`${t.data.title} — Free Checklist Template`}
+  description={t.data.description}
+  type="article"
+  publishedTime={t.data.updatedDate.toISOString()}
+>
+  <section style="padding-top:48px;">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:start;" class="tpl-detail">
+        <div>
+          <a href="/templates" class="muted" style="font-size:14px;">← All templates</a>
+          <div style="font-size:48px;margin:16px 0 8px;">{t.data.emoji}</div>
+          <h1 style="font-size:36px;font-weight:800;">{t.data.title}</h1>
+          <p class="muted" style="font-size:18px;margin:12px 0 18px;max-width:560px;">{t.data.description}</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+            <span class="badge">{t.data.category}</span>
+            <span class="badge">{t.data.items} items</span>
+            {t.data.tags.map(tag => <span class="badge">#{tag}</span>)}
+          </div>
+          <div class="prose" style="margin-top:24px;"><Content /></div>
+        </div>
+        <div style="position:sticky;top:88px;">
+          <DownloadForm fileKey={t.data.fileKey} templateTitle={t.data.title} />
+        </div>
+      </div>
+    </div>
+  </section>
+  <style>
+    @media(max-width:820px){.tpl-detail{grid-template-columns:1fr !important;}}
+  </style>
+</BaseLayout>

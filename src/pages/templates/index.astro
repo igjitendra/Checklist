@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const templates = (await getCollection('templates')).sort((a,b)=>+b.data.updatedDate - +a.data.updatedDate);
+const categories = ['all', ...Array.from(new Set(templates.map(t=>t.data.category)))];
+---
+<BaseLayout title="Checklist Templates — Free Downloads" description="Browse and download free checklist templates for business, personal, travel, home, finance and more. Printable PDFs, no login needed.">
+  <section style="padding-top:56px;">
+    <div class="container">
+      <div class="sec-head"><span class="eyebrow">Templates</span><h2>Free checklist templates</h2><p>Pick a template, fill a quick form, and download a clean printable PDF.</p></div>
+
+      <div class="chips" id="chips">
+        {categories.map(c => (
+          <button class={`chip ${c==='all'?'active':''}`} data-cat={c}>{c === 'all' ? 'All' : c.charAt(0).toUpperCase()+c.slice(1)}</button>
+        ))}
+      </div>
+
+      <div class="grid g-3" id="tplGrid">
+        {templates.map(t => (
+          <a href={`/templates/${t.slug}`} class="card tpl" data-cat={t.data.category}>
+            <div class="emoji">{t.data.emoji}</div>
+            <h3>{t.data.title}</h3>
+            <p>{t.data.description}</p>
+            <div class="meta"><span class="badge">{t.data.category}</span><span>{t.data.items} items →</span></div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const chips = document.querySelectorAll('#chips .chip');
+    const cards = document.querySelectorAll('#tplGrid .tpl');
+    chips.forEach(chip => chip.addEventListener('click', () => {
+      chips.forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      const cat = chip.dataset.cat;
+      cards.forEach(card => {
+        card.style.display = (cat==='all' || card.dataset.cat===cat) ? '' : 'none';
+      });
+    }));
+  </script>
+</BaseLayout>
