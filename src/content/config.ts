@@ -8,6 +8,7 @@ const templates = defineCollection({
     emoji: z.string().default('📋'),
     category: z.enum(['business', 'personal', 'travel', 'home', 'event', 'finance', 'health', 'seo']),
     tags: z.array(z.string()).default([]),
+    keywords: z.array(z.string()).default([]),
     fileBase: z.string(),
     preview: z.string(),
     formats: z.array(z.enum(['pdf', 'jpg'])).default(['pdf', 'jpg']),
@@ -24,8 +25,8 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string(),
     emoji: z.string().default('📝'),
-    // Optional cover/thumbnail image, e.g. "/blog/my-post.webp" (upload to public/blog/)
     cover: z.string().optional(),
+    keywords: z.array(z.string()).default([]),
     author: z.string().default('Checklist Team'),
     pubDate: z.coerce.date(),
     tags: z.array(z.string()).default([]),

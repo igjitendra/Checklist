@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /blog-writer
+Disallow: /template-writer
 
 Sitemap: https://checklist.example.com/sitemap.xml

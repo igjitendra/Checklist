@@ -1,0 +1,136 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+// PRIVATE admin tool — NOT linked anywhere. Open by typing /blog-writer
+---
+<BaseLayout title="Blog Writer (Admin)" description="Internal blog markdown generator." noindex={true}>
+  <section style="padding-top:40px;">
+    <div class="container">
+      <div class="center" style="max-width:720px;margin:0 auto 26px;">
+        <span class="eyebrow">Admin tool</span>
+        <h1 style="font-size:34px;font-weight:800;margin-top:8px;">Blog Writer</h1>
+        <p class="muted" style="margin-top:10px;">Fill SEO details, build content with blocks (H1–H6, paragraph, list…), then <strong>Generate</strong> the <code>.md</code> for <code>src/content/blog/</code>.</p>
+      </div>
+
+      <div class="tool-wrap">
+        <div class="tool-card">
+          <h3 style="font-size:15px;font-weight:800;margin-bottom:12px;">SEO &amp; meta</h3>
+          <div class="field"><label>Post title (H1) *</label><input type="text" id="bTitle" placeholder="How to Make a Checklist Online" /></div>
+          <div class="field">
+            <div class="tool-actions" style="margin:0 0 4px;"><button type="button" class="btn btn-ghost btn-sm" id="bPrompt">📋 Copy AI writing prompt</button><span id="bPromptMsg" class="muted" style="font-size:12.5px;align-self:center;"></span></div>
+            <div class="path-note">Type your title above → click this → paste the prompt into ChatGPT/AI. It writes a detailed, SEO-optimized post. Then paste the sections into the blocks below.</div>
+          </div>
+          <div class="field"><label>URL slug (file name)</label><input type="text" id="bSlug" placeholder="auto from title" /></div>
+          <div class="field"><label>Meta description (SEO) *</label><textarea id="bDesc" rows="2" placeholder="140-160 characters summary for Google"></textarea></div>
+          <div class="field"><label>Focus keywords (comma separated)</label><input type="text" id="bKeywords" placeholder="checklist maker, online checklist" /></div>
+          <div class="field"><label>Tags (comma separated)</label><input type="text" id="bTags" placeholder="productivity, tips" /></div>
+          <div class="field"><label>Thumbnail image (slug)</label><input type="text" id="bCover" placeholder="auto: /blog/&lt;slug&gt;.webp" />
+            <div class="path-note" id="bCoverNote">Store your image at: <code>public/blog/&lt;slug&gt;.webp</code></div>
+          </div>
+          <div class="tool-row">
+            <div class="field"><label>Author</label><input type="text" id="bAuthor" value="Checklist Team" /></div>
+            <div class="field"><label>Publish date</label><input type="date" id="bDate" /></div>
+          </div>
+          <label class="tool-check" style="margin-bottom:6px;"><input type="checkbox" id="bDraft" /> Save as draft (won't go live)</label>
+
+          <h3 style="font-size:15px;font-weight:800;margin:20px 0 12px;">Content blocks</h3>
+          <div id="bBlocks"></div>
+          <div class="add-blk-row">
+            <button class="add-blk" id="bAddBlock" type="button">+ Add block</button>
+          </div>
+        </div>
+
+        <div class="tool-out">
+          <div class="tool-actions">
+            <button class="btn btn-cta btn-sm" id="bGen">⬇ Generate &amp; Download .md</button>
+            <button class="btn btn-ghost btn-sm" id="bCopy">Copy</button>
+          </div>
+          <pre id="bOut">---</pre>
+          <div class="tool-note">ℹ️ Upload the <code>.md</code> to <code>src/content/blog/</code>. Upload the thumbnail to <code>public/blog/</code>. Push to GitHub → it goes live.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const $=(s)=>document.querySelector(s);
+    const TYPES=[['p','Paragraph'],['h1','Heading 1'],['h2','Heading 2'],['h3','Heading 3'],['h4','Heading 4'],['h5','Heading 5'],['h6','Heading 6'],['ul','Bullet item'],['ol','Numbered item'],['quote','Quote'],['divider','Divider']];
+    const PREFIX={p:'',h1:'# ',h2:'## ',h3:'### ',h4:'#### ',h5:'##### ',h6:'###### ',ul:'- ',ol:'1. ',quote:'> '};
+    let BLOCKS=[{type:'h2',text:'Introduction'},{type:'p',text:''}];
+
+    function slugify(s){return (s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');}
+    function q(s){return '"'+String(s||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"';}
+    function arr(s){const a=(s||'').split(',').map(x=>x.trim()).filter(Boolean);return '['+a.map(q).join(', ')+']';}
+    function today(){return new Date().toISOString().slice(0,10);}
+    function curSlug(){return slugify($('#bSlug').value)||slugify($('#bTitle').value)||'post';}
+
+    function renderBlocks(){
+      const box=$('#bBlocks'); box.innerHTML='';
+      BLOCKS.forEach((b,i)=>{
+        const d=document.createElement('div'); d.className='blk';
+        const head=document.createElement('div'); head.className='blk-head';
+        const sel=document.createElement('select'); sel.innerHTML=TYPES.map(t=>'<option value="'+t[0]+'"'+(t[0]===b.type?' selected':'')+'>'+t[1]+'</option>').join('');
+        sel.onchange=()=>{b.type=sel.value; renderBlocks(); refresh();};
+        const up=document.createElement('button'); up.textContent='↑'; up.title='Move up'; up.onclick=()=>{if(i>0){[BLOCKS[i-1],BLOCKS[i]]=[BLOCKS[i],BLOCKS[i-1]];renderBlocks();refresh();}};
+        const del=document.createElement('button'); del.textContent='🗑'; del.title='Delete'; del.onclick=()=>{BLOCKS.splice(i,1); if(!BLOCKS.length)BLOCKS.push({type:'p',text:''}); renderBlocks(); refresh();};
+        head.append(sel,up,del); d.appendChild(head);
+        if(b.type!=='divider'){ const ta=document.createElement('textarea'); ta.rows=(b.type==='p'||b.type==='quote')?3:1; ta.value=b.text||''; ta.placeholder=(TYPES.find(t=>t[0]===b.type)||['',''])[1]+' text…'; ta.oninput=()=>{b.text=ta.value; refresh();}; d.appendChild(ta); }
+        box.appendChild(d);
+      });
+    }
+    function buildBody(){ return BLOCKS.map(b=> b.type==='divider' ? '---' : (PREFIX[b.type]+(b.text||''))).join('\n\n').trim(); }
+    function build(){
+      const cover=$('#bCover').value.trim() || ('/blog/'+curSlug()+'.webp');
+      let fm='---\n';
+      fm+='title: '+q($('#bTitle').value)+'\n';
+      fm+='description: '+q($('#bDesc').value)+'\n';
+      fm+='cover: '+q(cover)+'\n';
+      fm+='keywords: '+arr($('#bKeywords').value)+'\n';
+      fm+='author: '+q($('#bAuthor').value||'Checklist Team')+'\n';
+      fm+='pubDate: '+($('#bDate').value||today())+'\n';
+      fm+='tags: '+arr($('#bTags').value)+'\n';
+      fm+='draft: '+($('#bDraft').checked?'true':'false')+'\n';
+      fm+='---\n\n'+buildBody()+'\n';
+      return fm;
+    }
+    function refresh(){ $('#bOut').textContent=build(); $('#bCoverNote').innerHTML='Store your image at: <code>public/blog/'+curSlug()+'.webp</code>'; }
+    function aiPrompt(){
+      const title=$('#bTitle').value||'(your blog title)';
+      const kw=$('#bKeywords').value||title;
+      return `You are an expert SEO content writer. Write a detailed, original, engaging blog post in clear, simple English titled:
+"${title}"
+
+Primary keyword(s): ${kw}
+
+SEO & format requirements:
+- 1000-1500 words, genuinely helpful and specific (no fluff).
+- Start with a short hook intro (2-3 sentences).
+- Use several ## H2 and ### H3 headings, using the keyword naturally.
+- Short paragraphs (2-4 lines) and bullet lists where useful.
+- Include a practical step-by-step or tips section.
+- End with a conclusion and a call-to-action to try our free online checklist maker.
+- Use the primary keyword + related/LSI terms naturally (no keyword stuffing).
+
+Also provide, clearly labelled at the top:
+1) SEO title (max 60 characters)
+2) Meta description (150-160 characters)
+3) URL slug (lowercase-with-hyphens)
+4) 5-7 tags
+5) 3-5 suggested internal links (anchor text + idea)
+
+Return the full article body in clean Markdown using #, ##, ###, paragraphs, - bullets and > quotes so I can paste it directly.`;
+    }
+    function download(){const b=new Blob([build()],{type:'text/markdown'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=curSlug()+'.md';a.click();URL.revokeObjectURL(a.href);}
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      $('#bDate').value=today(); renderBlocks(); refresh();
+      ['bTitle','bSlug','bDesc','bKeywords','bTags','bCover','bAuthor','bDate'].forEach(id=>document.getElementById(id).addEventListener('input',refresh));
+      $('#bDraft').addEventListener('change',refresh);
+      $('#bTitle').addEventListener('input',()=>{if(!$('#bSlug').dataset.touched)$('#bSlug').value=slugify($('#bTitle').value);refresh();});
+      $('#bSlug').addEventListener('input',()=>{$('#bSlug').dataset.touched='1';});
+      $('#bAddBlock').onclick=()=>{BLOCKS.push({type:'p',text:''});renderBlocks();refresh();};
+      $('#bPrompt').onclick=async()=>{ if(!$('#bTitle').value.trim()){alert('Please add a title first.');return;} try{ await navigator.clipboard.writeText(aiPrompt()); $('#bPromptMsg').textContent='Prompt copied! Paste into AI.'; setTimeout(()=>$('#bPromptMsg').textContent='',2000);}catch(e){ alert('Copy failed — select and copy manually.'); } };
+      $('#bGen').onclick=()=>{if(!$('#bTitle').value.trim()){alert('Please add a title.');return;}download();};
+      $('#bCopy').onclick=async()=>{try{await navigator.clipboard.writeText(build());$('#bCopy').textContent='Copied!';setTimeout(()=>$('#bCopy').textContent='Copy',1200);}catch(e){}};
+    });
+  </script>
+</BaseLayout>

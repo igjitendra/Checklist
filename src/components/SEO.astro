@@ -1,6 +1,5 @@
 ---
 import { site } from '../config/site';
-// Reusable SEO head: meta tags, Open Graph, Twitter, canonical, JSON-LD
 export interface Props {
   title: string;
   description: string;
@@ -8,14 +7,11 @@ export interface Props {
   type?: 'website' | 'article';
   publishedTime?: string;
   noindex?: boolean;
+  keywords?: string[];
 }
 const {
-  title,
-  description,
-  image = '/og-default.png',
-  type = 'website',
-  publishedTime,
-  noindex = false,
+  title, description, image = '/og-default.png', type = 'website',
+  publishedTime, noindex = false, keywords = [],
 } = Astro.props;
 
 const siteName = site.name;
@@ -25,21 +21,15 @@ const ogImage = new URL(image, Astro.site).href;
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': type === 'article' ? 'Article' : 'WebSite',
-  name: title,
-  headline: title,
-  description,
-  url: canonical,
-  image: ogImage,
+  name: title, headline: title, description, url: canonical, image: ogImage,
+  ...(keywords.length ? { keywords: keywords.join(', ') } : {}),
   ...(publishedTime ? { datePublished: publishedTime } : {}),
-  publisher: {
-    '@type': 'Organization',
-    name: siteName,
-    logo: { '@type': 'ImageObject', url: new URL('/favicon.svg', Astro.site).href },
-  },
+  publisher: { '@type': 'Organization', name: siteName, logo: { '@type': 'ImageObject', url: new URL('/favicon.svg', Astro.site).href } },
 };
 ---
 <title>{title}</title>
 <meta name="description" content={description} />
+{keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
 <link rel="canonical" href={canonical} />
 {noindex && <meta name="robots" content="noindex,nofollow" />}
 

@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+// PRIVATE admin tool — NOT linked anywhere. Open by typing /template-writer
+---
+<BaseLayout title="Template Writer (Admin)" description="Internal template markdown generator." noindex={true}>
+  <section style="padding-top:40px;">
+    <div class="container">
+      <div class="center" style="max-width:720px;margin:0 auto 26px;">
+        <span class="eyebrow">Admin tool</span>
+        <h1 style="font-size:34px;font-weight:800;margin-top:8px;">Template Writer</h1>
+        <p class="muted" style="margin-top:10px;">Fill SEO details, build content with blocks, then <strong>Generate</strong> the <code>.md</code> for <code>src/content/templates/</code>.</p>
+      </div>
+
+      <div class="tool-wrap">
+        <div class="tool-card">
+          <h3 style="font-size:15px;font-weight:800;margin-bottom:12px;">SEO &amp; meta</h3>
+          <div class="field"><label>Template title *</label><input type="text" id="tTitle" placeholder="Wedding Planning Checklist" /></div>
+          <div class="field">
+            <div class="tool-actions" style="margin:0 0 4px;"><button type="button" class="btn btn-ghost btn-sm" id="tPrompt">📋 Copy AI writing prompt</button><span id="tPromptMsg" class="muted" style="font-size:12.5px;align-self:center;"></span></div>
+            <div class="path-note">Type your title above → click this → paste the prompt into ChatGPT/AI. It writes the template content + SEO. Then paste into the blocks below.</div>
+          </div>
+          <div class="field"><label>File name (fileBase / slug)</label><input type="text" id="tSlug" placeholder="auto from title" /></div>
+          <div class="field"><label>Meta description (SEO) *</label><textarea id="tDesc" rows="2" placeholder="140-160 characters summary for Google"></textarea></div>
+          <div class="field"><label>Focus keywords (comma separated)</label><input type="text" id="tKeywords" placeholder="wedding checklist, planning template" /></div>
+          <div class="tool-row">
+            <div class="field"><label>Category</label>
+              <select id="tCat"><option>business</option><option>personal</option><option>travel</option><option>home</option><option>event</option><option>finance</option><option>health</option><option>seo</option></select>
+            </div>
+            <div class="field"><label>Number of items</label><input type="text" id="tItems" inputmode="numeric" placeholder="12" /></div>
+          </div>
+          <div class="field"><label>Tags (comma separated)</label><input type="text" id="tTags" placeholder="wedding, planning" /></div>
+          <div class="field"><label>Thumbnail (auto from file name)</label>
+            <div class="path-note" id="tCoverNote">Preview: <code>/templates/preview/&lt;slug&gt;.webp</code><br>Store your design at: <code>template-source/&lt;slug&gt;.webp</code> then run <code>npm run templates</code></div>
+          </div>
+          <div class="tool-row">
+            <label class="tool-check"><input type="checkbox" id="tFeatured" /> Featured (home)</label>
+            <label class="tool-check"><input type="checkbox" id="tPro" /> Pro (follow to unlock)</label>
+          </div>
+          <div class="tool-row" style="margin-top:12px;">
+            <label class="tool-check"><input type="checkbox" id="tPdf" checked /> PDF</label>
+            <label class="tool-check"><input type="checkbox" id="tJpg" checked /> JPG</label>
+          </div>
+          <div class="field" style="margin-top:14px;"><label>Updated date</label><input type="date" id="tDate" /></div>
+
+          <h3 style="font-size:15px;font-weight:800;margin:20px 0 12px;">Content blocks</h3>
+          <div id="tBlocks"></div>
+          <div class="add-blk-row"><button class="add-blk" id="tAddBlock" type="button">+ Add block</button></div>
+        </div>
+
+        <div class="tool-out">
+          <div class="tool-actions">
+            <button class="btn btn-cta btn-sm" id="tGen">⬇ Generate &amp; Download .md</button>
+            <button class="btn btn-ghost btn-sm" id="tCopy">Copy</button>
+          </div>
+          <pre id="tOut">---</pre>
+          <div class="tool-note">ℹ️ 1) upload <code>.md</code> to <code>src/content/templates/</code><br>2) put <code>&lt;slug&gt;.webp</code> in <code>template-source/</code> → run <code>npm run templates</code><br>3) upload generated <code>.jpg</code> + <code>.pdf</code> to R2<br>4) push to GitHub.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const $=(s)=>document.querySelector(s);
+    const TYPES=[['p','Paragraph'],['h1','Heading 1'],['h2','Heading 2'],['h3','Heading 3'],['h4','Heading 4'],['h5','Heading 5'],['h6','Heading 6'],['ul','Bullet item'],['ol','Numbered item'],['quote','Quote'],['divider','Divider']];
+    const PREFIX={p:'',h1:'# ',h2:'## ',h3:'### ',h4:'#### ',h5:'##### ',h6:'###### ',ul:'- ',ol:'1. ',quote:'> '};
+    let BLOCKS=[{type:'h2',text:'Why use this checklist'},{type:'p',text:''},{type:'h2',text:"What's inside"},{type:'ul',text:'First item'}];
+
+    function slugify(s){return (s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');}
+    function q(s){return '"'+String(s||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"';}
+    function arr(s){const a=(s||'').split(',').map(x=>x.trim()).filter(Boolean);return '['+a.map(q).join(', ')+']';}
+    function today(){return new Date().toISOString().slice(0,10);}
+    function base(){return slugify($('#tSlug').value)||slugify($('#tTitle').value)||'template';}
+
+    function renderBlocks(){
+      const box=$('#tBlocks'); box.innerHTML='';
+      BLOCKS.forEach((b,i)=>{
+        const d=document.createElement('div'); d.className='blk';
+        const head=document.createElement('div'); head.className='blk-head';
+        const sel=document.createElement('select'); sel.innerHTML=TYPES.map(t=>'<option value="'+t[0]+'"'+(t[0]===b.type?' selected':'')+'>'+t[1]+'</option>').join('');
+        sel.onchange=()=>{b.type=sel.value;renderBlocks();refresh();};
+        const up=document.createElement('button'); up.textContent='↑'; up.onclick=()=>{if(i>0){[BLOCKS[i-1],BLOCKS[i]]=[BLOCKS[i],BLOCKS[i-1]];renderBlocks();refresh();}};
+        const del=document.createElement('button'); del.textContent='🗑'; del.onclick=()=>{BLOCKS.splice(i,1);if(!BLOCKS.length)BLOCKS.push({type:'p',text:''});renderBlocks();refresh();};
+        head.append(sel,up,del); d.appendChild(head);
+        if(b.type!=='divider'){const ta=document.createElement('textarea');ta.rows=(b.type==='p'||b.type==='quote')?3:1;ta.value=b.text||'';ta.placeholder=(TYPES.find(t=>t[0]===b.type)||['',''])[1]+' text…';ta.oninput=()=>{b.text=ta.value;refresh();};d.appendChild(ta);}
+        box.appendChild(d);
+      });
+    }
+    function buildBody(){return BLOCKS.map(b=> b.type==='divider'?'---':(PREFIX[b.type]+(b.text||''))).join('\n\n').trim();}
+    function build(){
+      const fb=base(); const fmts=[]; if($('#tPdf').checked)fmts.push('"pdf"'); if($('#tJpg').checked)fmts.push('"jpg"');
+      const items=parseInt($('#tItems').value,10);
+      let fm='---\n';
+      fm+='title: '+q($('#tTitle').value)+'\n';
+      fm+='description: '+q($('#tDesc').value)+'\n';
+      fm+='category: '+q($('#tCat').value)+'\n';
+      fm+='keywords: '+arr($('#tKeywords').value)+'\n';
+      fm+='tags: '+arr($('#tTags').value)+'\n';
+      fm+='fileBase: '+q(fb)+'\n';
+      fm+='preview: '+q('/templates/preview/'+fb+'.webp')+'\n';
+      fm+='formats: ['+fmts.join(', ')+']\n';
+      fm+='items: '+(isNaN(items)?0:items)+'\n';
+      fm+='featured: '+($('#tFeatured').checked?'true':'false')+'\n';
+      fm+='pro: '+($('#tPro').checked?'true':'false')+'\n';
+      fm+='updatedDate: '+($('#tDate').value||today())+'\n';
+      fm+='---\n\n'+buildBody()+'\n';
+      return fm;
+    }
+    function refresh(){$('#tOut').textContent=build(); $('#tCoverNote').innerHTML='Preview: <code>/templates/preview/'+base()+'.webp</code><br>Store your design at: <code>template-source/'+base()+'.webp</code> then run <code>npm run templates</code>';}
+    function aiPrompt(){
+      const title=$('#tTitle').value||'(template title)';
+      const cat=$('#tCat').value; const kw=$('#tKeywords').value||title;
+      return `You are an expert SEO writer creating a downloadable checklist template page.
+Template title: "${title}" (category: ${cat}).
+Primary keyword(s): ${kw}
+
+Write the page content in clean Markdown:
+- A "## Why use this checklist" intro (2-3 sentences, keyword used naturally).
+- A "## What's inside" section with 8-15 clear, actionable checklist items as a - bullet list.
+- Optionally 1-2 quick tips as a > quote.
+
+Also provide, clearly labelled at the top:
+1) Meta description (150-160 characters, includes the keyword)
+2) 5-7 focus keywords
+3) 5 tags
+4) A suggested number of items
+
+Keep it practical and specific to "${title}". Return Markdown I can paste directly.`;
+    }
+    function download(){const b=new Blob([build()],{type:'text/markdown'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=base()+'.md';a.click();URL.revokeObjectURL(a.href);}
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      $('#tDate').value=today(); renderBlocks(); refresh();
+      ['tTitle','tSlug','tDesc','tKeywords','tCat','tItems','tTags','tDate'].forEach(id=>document.getElementById(id).addEventListener('input',refresh));
+      ['tFeatured','tPro','tPdf','tJpg','tCat'].forEach(id=>document.getElementById(id).addEventListener('change',refresh));
+      $('#tTitle').addEventListener('input',()=>{if(!$('#tSlug').dataset.touched)$('#tSlug').value=slugify($('#tTitle').value);refresh();});
+      $('#tSlug').addEventListener('input',()=>{$('#tSlug').dataset.touched='1';});
+      $('#tAddBlock').onclick=()=>{BLOCKS.push({type:'p',text:''});renderBlocks();refresh();};
+      $('#tPrompt').onclick=async()=>{ if(!$('#tTitle').value.trim()){alert('Please add a title first.');return;} try{ await navigator.clipboard.writeText(aiPrompt()); $('#tPromptMsg').textContent='Prompt copied! Paste into AI.'; setTimeout(()=>$('#tPromptMsg').textContent='',2000);}catch(e){ alert('Copy failed — select and copy manually.'); } };
+      $('#tGen').onclick=()=>{if(!$('#tTitle').value.trim()){alert('Please add a title.');return;}download();};
+      $('#tCopy').onclick=async()=>{try{await navigator.clipboard.writeText(build());$('#tCopy').textContent='Copied!';setTimeout(()=>$('#tCopy').textContent='Copy',1200);}catch(e){}};
+    });
+  </script>
+</BaseLayout>

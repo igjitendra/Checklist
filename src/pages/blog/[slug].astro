@@ -15,6 +15,7 @@ const { Content } = await p.render();
   image={p.data.cover || '/og-default.png'}
   type="article"
   publishedTime={p.data.pubDate.toISOString()}
+  keywords={p.data.keywords}
 >
   <article style="padding-top:48px;">
     <div class="container">

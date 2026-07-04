@@ -2,12 +2,15 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout title="Page not found — Checklist" description="The page you are looking for could not be found." noindex={true}>
-  <section style="padding:100px 0;text-align:center;">
+  <section style="padding:70px 0;text-align:center;">
     <div class="container">
-      <div style="font-size:64px;">🧭</div>
-      <h1 style="font-size:34px;font-weight:800;margin:16px 0 8px;">Page not found</h1>
+      <img src="/404.gif" alt="Page not found" style="max-width:360px;width:82%;margin:0 auto 22px;border-radius:16px;display:block;" onerror="this.style.display='none'" />
+      <h1 style="font-size:34px;font-weight:800;margin:8px 0;">Oops! Page not found</h1>
       <p class="muted" style="margin-bottom:24px;">The page you're looking for doesn't exist or was moved.</p>
-      <a href="/" class="btn btn-primary">Back to home</a>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="/" class="btn btn-cta">Back to home</a>
+        <a href="/templates" class="btn btn-ghost">Browse templates</a>
+      </div>
     </div>
   </section>
 </BaseLayout>

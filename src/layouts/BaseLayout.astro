@@ -6,7 +6,7 @@ import '../styles/global.css';
 
 export interface Props {
   title: string; description: string; image?: string;
-  type?: 'website' | 'article'; publishedTime?: string; noindex?: boolean;
+  type?: 'website' | 'article'; publishedTime?: string; noindex?: boolean; keywords?: string[];
 }
 const props = Astro.props;
 ---
