@@ -1,7 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import DownloadForm from '../../components/DownloadForm.astro';
+import Icon from '../../components/Icon.astro';
 import { getCollection } from 'astro:content';
+
+const CAT_ICON = { business:'briefcase', personal:'user', travel:'map-pin', home:'home', event:'gift', finance:'dollar', health:'heart', seo:'trending' };
 
 export async function getStaticPaths() {
   const templates = await getCollection('templates');
@@ -22,7 +25,7 @@ const { Content } = await t.render();
       <div class="tpl-detail" style="display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:start;">
         <div>
           <a href="/templates" class="muted" style="font-size:14px;">← All templates</a>
-          <div style="font-size:44px;margin:14px 0 6px;">{t.data.emoji}</div>
+          <div class="det-ic"><Icon name={CAT_ICON[t.data.category] || 'template'} size={26} /></div>
           <h1 style="font-size:34px;font-weight:800;">{t.data.title} {t.data.pro && <span class="pro-tag">PRO</span>}</h1>
           <p class="muted" style="font-size:17px;margin:12px 0 16px;max-width:560px;">{t.data.description}</p>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
@@ -43,6 +46,7 @@ const { Content } = await t.render();
     </div>
   </section>
   <style>
+    .det-ic{width:56px;height:56px;border-radius:14px;background:var(--icon-chip);color:var(--blue);display:flex;align-items:center;justify-content:center;margin:14px 0 10px;}
     .preview-shot{position:relative;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--soft);box-shadow:var(--shadow);max-width:460px;}
     .preview-shot img{width:100%;height:auto;display:block;}
     .pv-badge{position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;}
