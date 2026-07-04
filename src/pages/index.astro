@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const templates = (await getCollection('templates')).sort((a,b)=>+b.data.updatedDate - +a.data.updatedDate);
+const featured = templates.filter(t=>t.data.featured).slice(0,3);
+const posts = (await getCollection('blog')).filter(p=>!p.data.draft).sort((a,b)=>+b.data.pubDate - +a.data.pubDate).slice(0,3);
+
+const features = [
+  {ic:'📋',t:'Ready-made templates',p:'Professionally designed checklists for work, home, travel and more.'},
+  {ic:'⬇️',t:'Instant download',p:'Fill a quick form and get a clean, printable PDF right away.'},
+  {ic:'🚩',t:'Priorities & due dates',p:'Focus on what matters and never miss a deadline.'},
+  {ic:'📝',t:'Helpful blog',p:'Guides and tips to help you get organized and stay productive.'},
+  {ic:'📱',t:'Fully responsive',p:'Looks and works beautifully on mobile, tablet and desktop.'},
+  {ic:'⚡',t:'Fast & SEO-ready',p:'Built for speed and search visibility from day one.'},
+];
+---
+<BaseLayout title="Checklist — Free Professional Checklist Templates" description="Download free, professionally designed checklist templates for work, travel, home and more. Organize your life and get things done.">
+
+  <section class="hero" style="padding-top:80px;">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">Free · No login · SEO-ready</span>
+        <h1 style="margin-top:14px;">Checklists for life and work — done right</h1>
+        <p class="lead">Download professionally designed, ready-to-use checklist templates. Fill a quick form, get a clean printable PDF, and start ticking things off.</p>
+        <div class="cta">
+          <a href="/templates" class="btn btn-primary">Browse Templates →</a>
+          <a href="/blog" class="btn btn-ghost">Read the blog</a>
+        </div>
+        <p class="note">✓ Free downloads &nbsp; ✓ New templates every week</p>
+      </div>
+      <div class="mock" aria-hidden="true">
+        <div class="mtitle"><b>🌒 Travel Packing</b><span class="muted" style="font-size:13px;">3 / 5 done</span></div>
+        <div class="mbar"><i></i></div>
+        <div class="mrow done"><span class="mck on">✓</span><span>Passport &amp; tickets</span></div>
+        <div class="mrow done"><span class="mck on">✓</span><span>Phone charger</span></div>
+        <div class="mrow done"><span class="mck on">✓</span><span>Toiletries</span></div>
+        <div class="mrow"><span class="mck"></span><span>Sunglasses</span><span class="pill md">Medium</span></div>
+        <div class="mrow"><span class="mck"></span><span>Travel adapter</span><span class="pill hi">High</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="sec-head"><span class="eyebrow">Features</span><h2>Everything you need to stay organized</h2><p>Simple tools and beautiful templates to plan, track and finish what matters.</p></div>
+      <div class="grid g-3">
+        {features.map(f => (
+          <div class="card feat"><div class="ic">{f.ic}</div><h3>{f.t}</h3><p>{f.p}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--soft);">
+    <div class="container">
+      <div class="sec-head"><span class="eyebrow">Templates</span><h2>Popular checklist templates</h2><p>Hand-picked templates loved by our users.</p></div>
+      <div class="grid g-3">
+        {featured.map(t => (
+          <a href={`/templates/${t.slug}`} class="card tpl">
+            <div class="emoji">{t.data.emoji}</div>
+            <h3>{t.data.title}</h3>
+            <p>{t.data.description}</p>
+            <div class="meta"><span class="badge">{t.data.category}</span><span>{t.data.items} items →</span></div>
+          </a>
+        ))}
+      </div>
+      <div class="center" style="margin-top:36px;"><a href="/templates" class="btn btn-ghost">View all templates</a></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="sec-head"><span class="eyebrow">Blog</span><h2>From the blog</h2><p>Tips and guides to help you get more done.</p></div>
+      <div class="grid g-3">
+        {posts.map(p => (
+          <a href={`/blog/${p.slug}`} class="card post">
+            <div class="cover">{p.data.emoji}</div>
+            <div class="body"><h3>{p.data.title}</h3><p>{p.data.description}</p><div class="date">{p.data.pubDate.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div></div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="band">
+        <h2>Ready to get organized?</h2>
+        <p>Browse dozens of free checklist templates and start ticking things off today.</p>
+        <a href="/templates" class="btn btn-primary">Browse Templates →</a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
