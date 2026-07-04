@@ -1,0 +1,21 @@
+{
+  "name": "checklist-site",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Checklist — Free online checklist templates, maker & blog",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "templates": "node scripts/prepare-templates.mjs"
+  },
+  "dependencies": {
+    "astro": "^4.15.0",
+    "@astrojs/mdx": "^3.1.3"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.4",
+    "pdf-lib": "^1.17.1"
+  }
+}

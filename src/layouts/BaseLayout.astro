@@ -1,0 +1,91 @@
+---
+import SEO from '../components/SEO.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+export interface Props {
+  title: string; description: string; image?: string;
+  type?: 'website' | 'article'; publishedTime?: string; noindex?: boolean;
+}
+const props = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2783DE" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <SEO {...props} />
+    <!-- no-flash theme -->
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.dataset.theme = t;
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <Nav />
+    <main><slot /></main>
+    <Footer />
+
+    <!-- Theme toggle + Auto multi-language -->
+    <script is:inline>
+      (function () {
+        /* ---- THEME ---- */
+        var root = document.documentElement;
+        function setTheme(t){ root.dataset.theme=t; try{localStorage.setItem('theme',t);}catch(e){} var b=document.getElementById('themeToggle'); if(b) b.setAttribute('aria-label', t==='dark'?'Switch to light':'Switch to dark'); syncThemeIcon(t); }
+        function syncThemeIcon(t){ var s=document.getElementById('iconSun'), m=document.getElementById('iconMoon'); if(s&&m){ s.style.display = t==='dark'?'block':'none'; m.style.display = t==='dark'?'none':'block'; } }
+        var tt=document.getElementById('themeToggle');
+        if(tt) tt.addEventListener('click', function(){ setTheme(root.dataset.theme==='dark'?'light':'dark'); });
+        syncThemeIcon(root.dataset.theme);
+
+        /* ---- i18n ---- */
+        var DICT = {
+          en: {nav_templates:'Templates',nav_blog:'Blog',nav_maker:'Template Maker',nav_make:'Make a Checklist',
+            hero_badge:'Free · No login · SEO-ready',hero_title:'Checklist Template Maker — Online & Free',hero_lead:'Create your own checklist template online in seconds, or download ready-made ones. Add your tasks, pick a color, and export as a clean PDF or JPG.',hero_browse:'Make a Checklist',hero_how:'Browse templates',hero_note:'Free forever · No sign-up · PDF & JPG',
+            stat_templates:'Templates',stat_formats:'Formats (PDF & JPG)',stat_free:'Free',stat_login:'Login needed',
+            how_eyebrow:'How it works',how_title:'Make a checklist online in 3 steps',how_sub:'Simple, fast, and completely free.',how_cta:'Open the Checklist Maker',
+            feat_eyebrow:'Features',feat_title:'Everything you need to stay organized',feat_sub:'A powerful online checklist maker plus beautiful ready-made templates.',
+            tpl_eyebrow:'Templates',tpl_title:'Popular checklist templates',tpl_sub:'Hand-picked templates loved by our users.',tpl_viewall:'View all templates',
+            blog_eyebrow:'Blog',blog_title:'From the blog',blog_sub:'Tips and guides to help you get more done.',
+            cta_title:'Ready to make your checklist?',cta_sub:'Use the free online checklist template maker — build it, download it, done.',cta_btn:'Make a Checklist',
+            foot_product:'Product',foot_categories:'Categories',foot_legal:'Legal',foot_about:'About'},
+          hi: {nav_templates:'टेम्पलेट्स',nav_blog:'ब्लॉग',nav_maker:'टेम्पलेट मेकर',nav_make:'चेकलिस्ट बनाएं',
+            hero_badge:'फ्री · लॉगिन नहीं · SEO-रेडी',hero_title:'चेकलिस्ट टेम्पलेट मेकर — ऑनलाइन और फ्री',hero_lead:'अपनी चेकलिस्ट टेम्पलेट सेकंडों में बनाएं, या तैयार टेम्पलेट download करें। tasks जोड़ें, रंग चुनें, और PDF या JPG में export करें।',hero_browse:'चेकलिस्ट बनाएं',hero_how:'टेम्पलेट देखें',hero_note:'हमेशा फ्री · साइन-अप नहीं · PDF & JPG',
+            stat_templates:'टेम्पलेट्स',stat_formats:'फॉर्मैट (PDF & JPG)',stat_free:'फ्री',stat_login:'लॉगिन ज़रूरी',
+            how_eyebrow:'कैसे काम करता है',how_title:'3 स्टेप में चेकलिस्ट बनाएं',how_sub:'आसान, तेज़ और बिलकुल फ्री।',how_cta:'चेकलिस्ट मेकर खोलें',
+            feat_eyebrow:'फीचर्स',feat_title:'व्यवस्थित रहने के लिए सब कुछ',feat_sub:'एक ताकतवर ऑनलाइन चेकलिस्ट मेकर और सुंदर तैयार टेम्पलेट्स।',
+            tpl_eyebrow:'टेम्पलेट्स',tpl_title:'लोकप्रिय चेकलिस्ट टेम्पलेट्स',tpl_sub:'यूजर्स के पसंदीदा टेम्पलेट्स।',tpl_viewall:'सभी टेम्पलेट देखें',
+            blog_eyebrow:'ब्लॉग',blog_title:'ब्लॉग से',blog_sub:'ज़्यादा काम निपटाने के लिए टिप्स।',
+            cta_title:'अपनी चेकलिस्ट बनाने को तैयार?',cta_sub:'फ्री ऑनलाइन चेकलिस्ट टेम्पलेट मेकर इस्तेमाल करें।',cta_btn:'चेकलिस्ट बनाएं',
+            foot_product:'प्रोडक्ट',foot_categories:'कैटेगरी',foot_legal:'कानूनी',foot_about:'हमारे बारे में'},
+          es: {nav_templates:'Plantillas',nav_blog:'Blog',nav_maker:'Creador de plantillas',nav_make:'Crear lista',hero_badge:'Gratis · Sin registro · SEO',hero_title:'Creador de plantillas de listas — en línea y gratis',hero_lead:'Crea tu propia lista de verificación en segundos o descarga plantillas listas. Añade tareas, elige un color y exporta en PDF o JPG.',hero_browse:'Crear lista',hero_how:'Ver plantillas',hero_note:'Gratis · Sin registro · PDF & JPG',cta_title:'¿Listo para crear tu lista?',cta_sub:'Usa el creador de listas gratis en línea.',cta_btn:'Crear lista',how_cta:'Abrir el creador',tpl_viewall:'Ver todas',foot_product:'Producto',foot_categories:'Categorías',foot_legal:'Legal',foot_about:'Acerca de'},
+          fr: {nav_templates:'Modèles',nav_blog:'Blog',nav_maker:'Créateur de modèles',nav_make:'Créer une liste',hero_badge:'Gratuit · Sans compte · SEO',hero_title:'Créateur de modèles de listes — en ligne et gratuit',hero_lead:'Créez votre liste de contrôle en quelques secondes ou téléchargez des modèles. Ajoutez des tâches, choisissez une couleur et exportez en PDF ou JPG.',hero_browse:'Créer une liste',hero_how:'Voir les modèles',hero_note:'Gratuit · Sans compte · PDF & JPG',cta_title:'Prêt à créer votre liste ?',cta_sub:'Utilisez le créateur de listes gratuit en ligne.',cta_btn:'Créer une liste',how_cta:'Ouvrir le créateur',tpl_viewall:'Voir tout',foot_product:'Produit',foot_categories:'Catégories',foot_legal:'Légal',foot_about:'À propos'}
+        };
+        var LANGS = [['en','English'],['hi','हिन्दी'],['es','Español'],['fr','Français']];
+        function detect(){ try{ var s=localStorage.getItem('lang'); if(s) return s; }catch(e){} var n=(navigator.language||'en').slice(0,2).toLowerCase(); return DICT[n]?n:'en'; }
+        function apply(lang){
+          var d=DICT[lang]||DICT.en;
+          document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var v=(d[k]!=null?d[k]:DICT.en[k]); if(v!=null) el.textContent=v; });
+          document.documentElement.lang=lang;
+          try{localStorage.setItem('lang',lang);}catch(e){}
+        }
+        var cur=detect();
+        var sel=document.getElementById('langSelect');
+        if(sel){ sel.innerHTML=LANGS.map(function(l){return '<option value="'+l[0]+'"'+(l[0]===cur?' selected':'')+'>'+l[1]+'</option>';}).join(''); sel.addEventListener('change',function(){apply(sel.value);}); }
+        apply(cur);
+
+        /* scroll reveal */
+        var els=document.querySelectorAll('.reveal');
+        if(!('IntersectionObserver' in window)||!els.length){ els.forEach(function(e){e.classList.add('in');}); }
+        else { var io=new IntersectionObserver(function(en){en.forEach(function(x){ if(x.isIntersecting){x.target.classList.add('in'); io.unobserve(x.target);} });},{threshold:.12,rootMargin:'0px 0px -40px 0px'}); els.forEach(function(e){io.observe(e);}); }
+      })();
+    </script>
+  </body>
+</html>

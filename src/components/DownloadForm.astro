@@ -1,0 +1,110 @@
+---
+import { site } from '../config/site';
+// Gated download form. On submit -> POST /api/download -> returns file URL.
+// If `pro`, the visitor must complete the follow tasks (from site config) to unlock.
+export interface Props {
+  fileBase: string;
+  templateTitle: string;
+  formats?: ('pdf' | 'jpg')[];
+  pro?: boolean;
+}
+const { fileBase, templateTitle, formats = ['pdf', 'jpg'], pro = false } = Astro.props;
+const TURNSTILE_SITEKEY = import.meta.env.PUBLIC_TURNSTILE_SITEKEY || '1x00000000000000000000AA';
+const tasks = site.followTasks;
+---
+<div class="dl-wrap">
+  <div class="form-card">
+    <h3 style="font-size:20px;font-weight:800;">{pro ? 'Unlock this Pro template' : 'Download this template'}</h3>
+    <p class="muted" style="font-size:14px;margin:6px 0 18px;">Fill in your details to get the <strong>{templateTitle}</strong> — free in PDF or JPG.</p>
+
+    {pro && (
+      <div class="follow-gate" id="followGate" data-count={tasks.length}>
+        <p class="fg-title">⭐ Complete these quick steps to unlock:</p>
+        {tasks.map(t => (
+          <a class="follow-task" data-id={t.id} href={t.url} target="_blank" rel="noopener">
+            <span class="ft-ic">{t.icon}</span>
+            <span class="ft-label">{t.label}</span>
+            <span class="ft-chk">○</span>
+          </a>
+        ))}
+        <p class="fg-hint muted">Tap each step (opens in a new tab), then your download unlocks below.</p>
+      </div>
+    )}
+
+    <form id="dlForm" data-filebase={fileBase} data-pro={pro ? '1' : '0'}>
+      <div class="field"><label for="name">Full name *</label><input id="name" name="name" type="text" required autocomplete="name" /></div>
+      <div class="field"><label for="email">Email address *</label><input id="email" name="email" type="email" required autocomplete="email" /></div>
+      <div class="field"><label for="whatsapp">WhatsApp number *</label><input id="whatsapp" name="whatsapp" type="tel" inputmode="tel" required autocomplete="tel" placeholder="+91 98765 43210" /></div>
+      <div class="field"><label for="purpose">What will you use it for?</label>
+        <select id="purpose" name="purpose">
+          <option value="personal">Personal use</option>
+          <option value="work">Work / business</option>
+          <option value="education">Education</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="field"><label for="format">Download format</label>
+        <select id="format" name="format">
+          {formats.includes('pdf') && <option value="pdf">PDF (printable)</option>}
+          {formats.includes('jpg') && <option value="jpg">JPG (image)</option>}
+        </select>
+      </div>
+      <div class="cf-turnstile" data-sitekey={TURNSTILE_SITEKEY} style="margin:6px 0 14px;"></div>
+      <button type="submit" class="btn btn-primary btn-block" id="dlBtn">⬇ Get free download</button>
+      <p class="form-msg" id="dlMsg"></p>
+      <p class="muted" style="font-size:12px;margin-top:6px;">We respect your privacy. No spam — unsubscribe anytime.</p>
+    </form>
+  </div>
+</div>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+  const form = document.getElementById('dlForm');
+  const msg = document.getElementById('dlMsg');
+  const btn = document.getElementById('dlBtn');
+  const gate = document.getElementById('followGate');
+  const isPro = form?.dataset.pro === '1';
+  const done = new Set();
+
+  if (isPro && gate) {
+    const total = Number(gate.dataset.count || '0');
+    const refresh = () => {
+      if (done.size >= total) { btn.disabled = false; btn.classList.remove('locked'); }
+      else { btn.disabled = true; btn.classList.add('locked'); btn.textContent = `🔒 Complete ${total - done.size} step(s) to unlock`; }
+    };
+    gate.querySelectorAll('.follow-task').forEach(a => {
+      a.addEventListener('click', () => {
+        setTimeout(() => { // mark done shortly after they leave to the link
+          done.add(a.dataset.id); a.classList.add('done');
+          const chk = a.querySelector('.ft-chk'); if (chk) chk.textContent = '✔';
+          if (done.size >= total) btn.textContent = '⬇ Get free download';
+          refresh();
+        }, 800);
+      });
+    });
+    refresh();
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    msg.className = 'form-msg'; msg.textContent = '';
+    if (isPro && gate && done.size < Number(gate.dataset.count || '0')) {
+      msg.className='form-msg err'; msg.textContent='Please complete all the steps above to unlock.'; return;
+    }
+    const data = {
+      name: form.name.value.trim(), email: form.email.value.trim(), whatsapp: form.whatsapp.value.trim(),
+      purpose: form.purpose.value, format: form.format.value, fileBase: form.dataset.filebase,
+      template: document.title, turnstile: (form.querySelector('[name="cf-turnstile-response"]') || {}).value || '',
+    };
+    if (!data.name || !data.email || !data.whatsapp) { msg.className='form-msg err'; msg.textContent='Please fill name, email and WhatsApp number.'; return; }
+    if (data.whatsapp.replace(/\D/g,'').length < 8) { msg.className='form-msg err'; msg.textContent='Please enter a valid WhatsApp number.'; return; }
+    btn.disabled = true; btn.textContent = 'Please wait…';
+    try {
+      const res = await fetch('/api/download', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+      const out = await res.json();
+      if (res.ok && out.url) { msg.className='form-msg ok'; msg.textContent='✅ Success! Your download is starting…'; window.location.href = out.url; }
+      else { msg.className='form-msg err'; msg.textContent = out.error || 'Something went wrong. Please try again.'; }
+    } catch (err) { msg.className='form-msg err'; msg.textContent='Network error. Please try again.'; }
+    finally { btn.disabled = false; btn.textContent='⬇ Get free download'; if (window.turnstile) window.turnstile.reset(); }
+  });
+</script>

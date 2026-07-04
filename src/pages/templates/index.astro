@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { getCollection } from 'astro:content';
+
+const CAT_ICON = { business:'briefcase', personal:'user', travel:'map-pin', home:'home', event:'gift', finance:'dollar', health:'heart', seo:'trending' };
+const templates = (await getCollection('templates')).sort((a,b)=>+b.data.updatedDate - +a.data.updatedDate);
+const categories = ['all', ...Array.from(new Set(templates.map(t=>t.data.category)))];
+---
+<BaseLayout title="Checklist Templates — Free Downloads (PDF & JPG)" description="Browse and download free checklist templates for business, personal, travel, home, finance and more. Printable PDF or JPG, no login needed.">
+  <section style="padding-top:56px;">
+    <div class="container">
+      <div class="sec-head reveal"><span class="eyebrow">Templates</span><h2>Free checklist templates</h2><p>Pick a template, fill a quick form, and download a clean PDF or JPG.</p></div>
+
+      <div class="chips" id="chips">
+        {categories.map(c => (<button class={`chip ${c==='all'?'active':''}`} data-cat={c}>{c === 'all' ? 'All' : c.charAt(0).toUpperCase()+c.slice(1)}</button>))}
+      </div>
+
+      <div class="grid g-3" id="tplGrid">
+        {templates.map(t => (
+          <a href={`/templates/${t.slug}`} class="card tpl" data-cat={t.data.category}>
+            <div class="tpl-ic"><Icon name={CAT_ICON[t.data.category] || 'template'} size={22} />{t.data.pro && <span class="pro-dot">PRO</span>}</div>
+            <h3>{t.data.title}</h3>
+            <p>{t.data.description}</p>
+            <div class="meta"><span class="badge">{t.data.category}</span><span>{t.data.items} items →</span></div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .tpl-ic{position:relative;width:46px;height:46px;border-radius:12px;background:var(--icon-chip);color:var(--blue);display:flex;align-items:center;justify-content:center;margin-bottom:4px;}
+    .pro-dot{position:absolute;top:-8px;right:-14px;font-size:10px;font-weight:800;color:#a35e1f;background:#FBEBDE;padding:2px 7px;border-radius:99px;}
+  </style>
+
+  <script>
+    const chips = document.querySelectorAll('#chips .chip');
+    const cards = document.querySelectorAll('#tplGrid .tpl');
+    chips.forEach(chip => chip.addEventListener('click', () => {
+      chips.forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      const cat = chip.dataset.cat;
+      cards.forEach(card => { card.style.display = (cat==='all' || card.dataset.cat===cat) ? '' : 'none'; });
+    }));
+  </script>
+</BaseLayout>

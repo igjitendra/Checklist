@@ -1,0 +1,57 @@
+---
+import { site } from '../config/site';
+import Icon from './Icon.astro';
+const year = new Date().getFullYear();
+const s = site.social;
+const socials = [
+  { url: s.instagram, label: 'Instagram', icon: 'instagram' },
+  { url: s.whatsapp, label: 'WhatsApp', icon: 'message' },
+  { url: s.telegram, label: 'Telegram', icon: 'send' },
+  { url: s.youtube, label: 'YouTube', icon: 'youtube' },
+].filter(x => x.url);
+---
+<footer class="footer">
+  <div class="grad-line"></div>
+  <div class="container fpad">
+    <div class="cols">
+      <div>
+        <div class="logo" style="display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;color:#fff;"><span style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--accent2));color:#fff;display:flex;align-items:center;justify-content:center;"><Icon name="check" size={18} sw={3} /></span> {site.name}</div>
+        <p style="max-width:320px;color:#8f8e8b;margin-top:12px;font-size:14.5px;line-height:1.6;">{site.shortDescription}</p>
+        {socials.length > 0 && (
+          <div class="soc">
+            {socials.map(x => (<a href={x.url} target="_blank" rel="noopener" aria-label={x.label} title={x.label}><Icon name={x.icon} size={18} /></a>))}
+          </div>
+        )}
+      </div>
+      <div>
+        <h4 data-i18n="foot_product">Product</h4>
+        <ul>
+          <li><a href="/maker" data-i18n="nav_maker">Template Maker</a></li>
+          <li><a href="/templates" data-i18n="nav_templates">Templates</a></li>
+          <li><a href="/blog" data-i18n="nav_blog">Blog</a></li>
+          <li><a href="/about" data-i18n="foot_about">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-i18n="foot_categories">Categories</h4>
+        <ul>
+          <li><a href="/templates">Business</a></li>
+          <li><a href="/templates">Personal</a></li>
+          <li><a href="/templates">Travel</a></li>
+          <li><a href="/templates">Finance</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-i18n="foot_legal">Legal</h4>
+        <ul>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/terms">Terms of Use</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bottom">
+      <span>© {year} <a href={site.credit.url}>{site.credit.text}</a>. All rights reserved.</span>
+      <span>{site.tagline}</span>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,58 @@
+---
+import { site } from '../config/site';
+// Reusable SEO head: meta tags, Open Graph, Twitter, canonical, JSON-LD
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  noindex?: boolean;
+}
+const {
+  title,
+  description,
+  image = '/og-default.png',
+  type = 'website',
+  publishedTime,
+  noindex = false,
+} = Astro.props;
+
+const siteName = site.name;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(image, Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': type === 'article' ? 'Article' : 'WebSite',
+  name: title,
+  headline: title,
+  description,
+  url: canonical,
+  image: ogImage,
+  ...(publishedTime ? { datePublished: publishedTime } : {}),
+  publisher: {
+    '@type': 'Organization',
+    name: siteName,
+    logo: { '@type': 'ImageObject', url: new URL('/favicon.svg', Astro.site).href },
+  },
+};
+---
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex,nofollow" />}
+
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
