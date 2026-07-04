@@ -5,7 +5,10 @@ import Icon from './Icon.astro';
 <header class="nav">
   <div class="container nav-inner">
     <a href="/" class="logo"><span class="box"><Icon name="check" size={18} sw={3} /></span> {site.name}</a>
-    <nav class="nav-links">
+    <button class="nav-burger" id="navBurger" aria-label="Menu" aria-expanded="false">
+      <span id="burgerOpen"><Icon name="menu" size={22} /></span>
+    </button>
+    <nav class="nav-links" id="navLinks">
       <a href="/maker" class="navlink hide-sm"><Icon name="maker" size={17} /> <span data-i18n="nav_maker">Template Maker</span></a>
       <a href="/templates" class="navlink hide-sm"><Icon name="template" size={17} /> <span data-i18n="nav_templates">Templates</span></a>
       <a href="/blog" class="navlink hide-sm"><Icon name="book" size={17} /> <span data-i18n="nav_blog">Blog</span></a>
@@ -19,9 +22,18 @@ import Icon from './Icon.astro';
           <span id="iconMoon"><Icon name="moon" size={18} /></span>
           <span id="iconSun" style="display:none"><Icon name="sun" size={18} /></span>
         </button>
-        <a href="/maker" class="btn btn-primary btn-sm"><Icon name="maker" size={16} /> <span data-i18n="nav_make">Make a Checklist</span></a>
+        <a href="/maker" class="btn btn-cta btn-sm"><Icon name="maker" size={16} /> <span data-i18n="nav_make">Make a Checklist</span></a>
       </div>
     </nav>
   </div>
 </header>
 <style>.lang-select .flip{transform:rotate(180deg);}</style>
+<script is:inline>
+  (function(){
+    var b=document.getElementById('navBurger'), l=document.getElementById('navLinks');
+    if(b&&l){
+      b.addEventListener('click', function(){ var o=l.classList.toggle('open'); b.setAttribute('aria-expanded', o?'true':'false'); });
+      l.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ l.classList.remove('open'); b.setAttribute('aria-expanded','false'); }); });
+    }
+  })();
+</script>

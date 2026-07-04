@@ -5,17 +5,8 @@ import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 
 export interface Props {
-<<<<<<< HEAD
   title: string; description: string; image?: string;
   type?: 'website' | 'article'; publishedTime?: string; noindex?: boolean;
-=======
-  title: string;
-  description: string;
-  image?: string;
-  type?: 'website' | 'article';
-  publishedTime?: string;
-  noindex?: boolean;
->>>>>>> 84701c2dd4a31b5b83cf2c397cc9c32f7cf25b9d
 }
 const props = Astro.props;
 ---
@@ -24,19 +15,15 @@ const props = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<<<<<<< HEAD
-    <meta name="theme-color" content="#2783DE" />
+    <meta name="theme-color" content="#6366F1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
     <meta name="generator" content={Astro.generator} />
     <SEO {...props} />
-    <!-- no-flash theme -->
     <script is:inline>
-      (function () {
-        try {
-          var t = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-          document.documentElement.dataset.theme = t;
-        } catch (e) {}
-      })();
+      (function () { try { var t = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); document.documentElement.dataset.theme = t; } catch (e) {} })();
     </script>
   </head>
   <body>
@@ -44,84 +31,47 @@ const props = Astro.props;
     <main><slot /></main>
     <Footer />
 
-    <!-- Theme toggle + Auto multi-language -->
     <script is:inline>
       (function () {
-        /* ---- THEME ---- */
         var root = document.documentElement;
-        function setTheme(t){ root.dataset.theme=t; try{localStorage.setItem('theme',t);}catch(e){} var b=document.getElementById('themeToggle'); if(b) b.setAttribute('aria-label', t==='dark'?'Switch to light':'Switch to dark'); syncThemeIcon(t); }
-        function syncThemeIcon(t){ var s=document.getElementById('iconSun'), m=document.getElementById('iconMoon'); if(s&&m){ s.style.display = t==='dark'?'block':'none'; m.style.display = t==='dark'?'none':'block'; } }
-        var tt=document.getElementById('themeToggle');
-        if(tt) tt.addEventListener('click', function(){ setTheme(root.dataset.theme==='dark'?'light':'dark'); });
+        function syncThemeIcon(t){ var s=document.getElementById('iconSun'), m=document.getElementById('iconMoon'); if(s&&m){ s.style.display=t==='dark'?'block':'none'; m.style.display=t==='dark'?'none':'block'; } }
+        function setTheme(t){ root.dataset.theme=t; try{localStorage.setItem('theme',t);}catch(e){} syncThemeIcon(t); }
+        var tt=document.getElementById('themeToggle'); if(tt) tt.addEventListener('click', function(){ setTheme(root.dataset.theme==='dark'?'light':'dark'); });
         syncThemeIcon(root.dataset.theme);
 
-        /* ---- i18n ---- */
         var DICT = {
-          en: {nav_templates:'Templates',nav_blog:'Blog',nav_maker:'Template Maker',nav_make:'Make a Checklist',
-            hero_badge:'Free · No login · SEO-ready',hero_title:'Checklist Template Maker — Online & Free',hero_lead:'Create your own checklist template online in seconds, or download ready-made ones. Add your tasks, pick a color, and export as a clean PDF or JPG.',hero_browse:'Make a Checklist',hero_how:'Browse templates',hero_note:'Free forever · No sign-up · PDF & JPG',
-            stat_templates:'Templates',stat_formats:'Formats (PDF & JPG)',stat_free:'Free',stat_login:'Login needed',
-            how_eyebrow:'How it works',how_title:'Make a checklist online in 3 steps',how_sub:'Simple, fast, and completely free.',how_cta:'Open the Checklist Maker',
-            feat_eyebrow:'Features',feat_title:'Everything you need to stay organized',feat_sub:'A powerful online checklist maker plus beautiful ready-made templates.',
-            tpl_eyebrow:'Templates',tpl_title:'Popular checklist templates',tpl_sub:'Hand-picked templates loved by our users.',tpl_viewall:'View all templates',
-            blog_eyebrow:'Blog',blog_title:'From the blog',blog_sub:'Tips and guides to help you get more done.',
-            cta_title:'Ready to make your checklist?',cta_sub:'Use the free online checklist template maker — build it, download it, done.',cta_btn:'Make a Checklist',
-            foot_product:'Product',foot_categories:'Categories',foot_legal:'Legal',foot_about:'About'},
-          hi: {nav_templates:'टेम्पलेट्स',nav_blog:'ब्लॉग',nav_maker:'टेम्पलेट मेकर',nav_make:'चेकलिस्ट बनाएं',
-            hero_badge:'फ्री · लॉगिन नहीं · SEO-रेडी',hero_title:'चेकलिस्ट टेम्पलेट मेकर — ऑनलाइन और फ्री',hero_lead:'अपनी चेकलिस्ट टेम्पलेट सेकंडों में बनाएं, या तैयार टेम्पलेट download करें। tasks जोड़ें, रंग चुनें, और PDF या JPG में export करें।',hero_browse:'चेकलिस्ट बनाएं',hero_how:'टेम्पलेट देखें',hero_note:'हमेशा फ्री · साइन-अप नहीं · PDF & JPG',
-            stat_templates:'टेम्पलेट्स',stat_formats:'फॉर्मैट (PDF & JPG)',stat_free:'फ्री',stat_login:'लॉगिन ज़रूरी',
-            how_eyebrow:'कैसे काम करता है',how_title:'3 स्टेप में चेकलिस्ट बनाएं',how_sub:'आसान, तेज़ और बिलकुल फ्री।',how_cta:'चेकलिस्ट मेकर खोलें',
-            feat_eyebrow:'फीचर्स',feat_title:'व्यवस्थित रहने के लिए सब कुछ',feat_sub:'एक ताकतवर ऑनलाइन चेकलिस्ट मेकर और सुंदर तैयार टेम्पलेट्स।',
-            tpl_eyebrow:'टेम्पलेट्स',tpl_title:'लोकप्रिय चेकलिस्ट टेम्पलेट्स',tpl_sub:'यूजर्स के पसंदीदा टेम्पलेट्स।',tpl_viewall:'सभी टेम्पलेट देखें',
-            blog_eyebrow:'ब्लॉग',blog_title:'ब्लॉग से',blog_sub:'ज़्यादा काम निपटाने के लिए टिप्स।',
-            cta_title:'अपनी चेकलिस्ट बनाने को तैयार?',cta_sub:'फ्री ऑनलाइन चेकलिस्ट टेम्पलेट मेकर इस्तेमाल करें।',cta_btn:'चेकलिस्ट बनाएं',
-            foot_product:'प्रोडक्ट',foot_categories:'कैटेगरी',foot_legal:'कानूनी',foot_about:'हमारे बारे में'},
-          es: {nav_templates:'Plantillas',nav_blog:'Blog',nav_maker:'Creador de plantillas',nav_make:'Crear lista',hero_badge:'Gratis · Sin registro · SEO',hero_title:'Creador de plantillas de listas — en línea y gratis',hero_lead:'Crea tu propia lista de verificación en segundos o descarga plantillas listas. Añade tareas, elige un color y exporta en PDF o JPG.',hero_browse:'Crear lista',hero_how:'Ver plantillas',hero_note:'Gratis · Sin registro · PDF & JPG',cta_title:'¿Listo para crear tu lista?',cta_sub:'Usa el creador de listas gratis en línea.',cta_btn:'Crear lista',how_cta:'Abrir el creador',tpl_viewall:'Ver todas',foot_product:'Producto',foot_categories:'Categorías',foot_legal:'Legal',foot_about:'Acerca de'},
-          fr: {nav_templates:'Modèles',nav_blog:'Blog',nav_maker:'Créateur de modèles',nav_make:'Créer une liste',hero_badge:'Gratuit · Sans compte · SEO',hero_title:'Créateur de modèles de listes — en ligne et gratuit',hero_lead:'Créez votre liste de contrôle en quelques secondes ou téléchargez des modèles. Ajoutez des tâches, choisissez une couleur et exportez en PDF ou JPG.',hero_browse:'Créer une liste',hero_how:'Voir les modèles',hero_note:'Gratuit · Sans compte · PDF & JPG',cta_title:'Prêt à créer votre liste ?',cta_sub:'Utilisez le créateur de listes gratuit en ligne.',cta_btn:'Créer une liste',how_cta:'Ouvrir le créateur',tpl_viewall:'Voir tout',foot_product:'Produit',foot_categories:'Catégories',foot_legal:'Légal',foot_about:'À propos'}
+          en:{nav_templates:'Templates',nav_blog:'Blog',nav_maker:'Template Maker',nav_make:'Make a Checklist',hero_badge:'Free · No login · SEO-ready',hero_title:'Checklist Template Maker — Online & Free',hero_lead:'Create your own checklist template online in seconds, or download ready-made ones. Add your tasks, pick a color, and export as a clean PDF or JPG.',hero_browse:'Make a Checklist',hero_how:'Browse templates',hero_note:'Free forever · No sign-up · PDF & JPG',stat_templates:'Templates',stat_formats:'Formats (PDF & JPG)',stat_free:'Free',stat_login:'Login needed',how_eyebrow:'How it works',how_title:'Make a checklist online in 3 steps',how_sub:'Simple, fast, and completely free.',how_cta:'Open the Checklist Maker',feat_eyebrow:'Features',feat_title:'Everything you need to stay organized',feat_sub:'A powerful online checklist maker plus beautiful ready-made templates.',tpl_eyebrow:'Templates',tpl_title:'Popular checklist templates',tpl_sub:'Hand-picked templates loved by our users.',tpl_viewall:'View all templates',blog_eyebrow:'Blog',blog_title:'From the blog',blog_sub:'Tips and guides to help you get more done.',cta_title:'Ready to make your checklist?',cta_sub:'Use the free online checklist template maker — build it, download it, done.',cta_btn:'Make a Checklist',foot_product:'Product',foot_categories:'Categories',foot_legal:'Legal',foot_about:'About'},
+          hi:{nav_templates:'टेम्पलेट्स',nav_blog:'ब्लॉग',nav_maker:'टेम्पलेट मेकर',nav_make:'चेकलिस्ट बनाएं',hero_badge:'फ्री · लॉगिन नहीं · SEO-रेडी',hero_title:'चेकलिस्ट टेम्पलेट मेकर — ऑनलाइन और फ्री',hero_lead:'अपनी चेकलिस्ट टेम्पलेट सेकंडों में बनाएं, या तैयार टेम्पलेट download करें। tasks जोड़ें, रंग चुनें, और PDF या JPG में export करें।',hero_browse:'चेकलिस्ट बनाएं',hero_how:'टेम्पलेट देखें',hero_note:'हमेशा फ्री · साइन-अप नहीं · PDF & JPG',stat_templates:'टेम्पलेट्स',stat_formats:'फॉर्मैट (PDF & JPG)',stat_free:'फ्री',stat_login:'लॉगिन ज़रूरी',how_eyebrow:'कैसे काम करता है',how_title:'3 स्टेप में चेकलिस्ट बनाएं',how_sub:'आसान, तेज़ और बिलकुल फ्री।',how_cta:'चेकलिस्ट मेकर खोलें',feat_eyebrow:'फीचर्स',feat_title:'व्यवस्थित रहने के लिए सब कुछ',feat_sub:'एक ताकतवर ऑनलाइन चेकलिस्ट मेकर और सुंदर तैयार टेम्पलेट्स।',tpl_eyebrow:'टेम्पलेट्स',tpl_title:'लोकप्रिय चेकलिस्ट टेम्पलेट्स',tpl_sub:'यूजर्स के पसंदीदा टेम्पलेट्स।',tpl_viewall:'सभी टेम्पलेट देखें',blog_eyebrow:'ब्लॉग',blog_title:'ब्लॉग से',blog_sub:'ज़्यादा काम निपटाने के लिए टिप्स।',cta_title:'अपनी चेकलिस्ट बनाने को तैयार?',cta_sub:'फ्री ऑनलाइन चेकलिस्ट टेम्पलेट मेकर इस्तेमाल करें।',cta_btn:'चेकलिस्ट बनाएं',foot_product:'प्रोडक्ट',foot_categories:'कैटेगरी',foot_legal:'कानूनी',foot_about:'हमारे बारे में'},
+          bn:{nav_templates:'তেমপ্লেট',nav_blog:'ব্লগ',nav_maker:'তেমপ্লেট মেকার',nav_make:'চেকলিস্ট তৈরি করুন',hero_title:'চেকলিস্ট তেমপ্লেট মেকার — অনলাইন ও ফ্রি',hero_lead:'সেকেন্ডে নিজের চেকলিস্ট তৈরি করুন বা তৈরি তেমপ্লেট ডাউনলোড করুন। টাস্ক যোগ করুন, রঙ বাছুন, PDF বা JPG তে সংরক্ষণ করুন।',hero_browse:'চেকলিস্ট তৈরি করুন',hero_how:'তেমপ্লেট দেখুন',hero_note:'ফ্রি · সাইন-আপ নেই · PDF ও JPG',stat_templates:'তেমপ্লেট',stat_formats:'ফরম্যাট (PDF ও JPG)',stat_free:'ফ্রি',stat_login:'লগইন লাগে না',how_cta:'মেকার খুলুন',tpl_viewall:'সব দেখুন',cta_title:'আপনার চেকলিস্ট তৈরি?',cta_sub:'ফ্রি অনলাইন চেকলিস্ট মেকার ব্যবহার করুন।',cta_btn:'চেকলিস্ট তৈরি করুন',foot_product:'পণ্য',foot_categories:'বিভাগ',foot_legal:'আইনি',foot_about:'সম্পর্কে'},
+          ta:{nav_templates:'வார்ப்புருக்கள்',nav_blog:'வலைப்பதிவு',nav_maker:'வார்ப்புரு உருவாக்கி',nav_make:'செக்லிஸ்ட் உருவாக்கு',hero_title:'செக்லிஸ்ட் வார்ப்புரு உருவாக்கி — ஆன்லைன் & இலவசம்',hero_lead:'வினாடிகளில் உங்கள் செக்லிஸ்டை உருவாக்குங்கள் அல்லது தயார் வார்ப்புருக்களை பதிவிறக்குங்கள். பணிகளைச் சேர்த்து, நிறத்தைத் தேர்ந்து, PDF அல்லது JPG ஆக ஏற்றுமதி செய்யுங்கள்.',hero_browse:'செக்லிஸ்ட் உருவாக்கு',hero_how:'வார்ப்புருக்கள்',hero_note:'இலவசம் · பதிவு தேவையில்லை · PDF & JPG',stat_templates:'வார்ப்புருக்கள்',stat_formats:'வடிவங்கள் (PDF & JPG)',stat_free:'இலவசம்',stat_login:'உள்நுழைவு தேவையில்லை',how_cta:'உருவாக்கியைத் திற',tpl_viewall:'அனைத்தையும் பார்',cta_title:'உங்கள் செக்லிஸ்ட் உருவாக்க தயாரா?',cta_sub:'இலவச ஆன்லைன் உருவாக்கியைப் பயன்படுத்துங்கள்.',cta_btn:'செக்லிஸ்ட் உருவாக்கு',foot_product:'தயாரிப்பு',foot_categories:'வகைகள்',foot_legal:'சட்டப்பூர்வம்',foot_about:'எங்களைப் பற்றி'},
+          es:{nav_templates:'Plantillas',nav_blog:'Blog',nav_maker:'Creador de plantillas',nav_make:'Crear lista',hero_title:'Creador de plantillas de listas — en línea y gratis',hero_lead:'Crea tu propia lista de verificación en segundos o descarga plantillas listas. Añade tareas, elige un color y expórtala en PDF o JPG.',hero_browse:'Crear lista',hero_how:'Ver plantillas',hero_note:'Gratis · Sin registro · PDF y JPG',stat_templates:'Plantillas',stat_formats:'Formatos (PDF y JPG)',stat_free:'Gratis',stat_login:'Sin registro',how_cta:'Abrir el creador',tpl_viewall:'Ver todas',cta_title:'¿Listo para crear tu lista?',cta_sub:'Usa el creador de listas gratis en línea.',cta_btn:'Crear lista',foot_product:'Producto',foot_categories:'Categorías',foot_legal:'Legal',foot_about:'Acerca de'},
+          fr:{nav_templates:'Modèles',nav_blog:'Blog',nav_maker:'Créateur de modèles',nav_make:'Créer une liste',hero_title:'Créateur de modèles de listes — en ligne et gratuit',hero_lead:'Créez votre liste de contrôle en quelques secondes ou téléchargez des modèles. Ajoutez des tâches, choisissez une couleur et exportez en PDF ou JPG.',hero_browse:'Créer une liste',hero_how:'Voir les modèles',hero_note:'Gratuit · Sans compte · PDF et JPG',stat_templates:'Modèles',stat_formats:'Formats (PDF et JPG)',stat_free:'Gratuit',stat_login:'Sans compte',how_cta:'Ouvrir le créateur',tpl_viewall:'Voir tout',cta_title:'Prêt à créer votre liste ?',cta_sub:'Utilisez le créateur de listes gratuit en ligne.',cta_btn:'Créer une liste',foot_product:'Produit',foot_categories:'Catégories',foot_legal:'Légal',foot_about:'À propos'},
+          pt:{nav_templates:'Modelos',nav_blog:'Blog',nav_maker:'Criador de modelos',nav_make:'Criar lista',hero_title:'Criador de modelos de listas — online e grátis',hero_lead:'Crie sua própria lista de verificação em segundos ou baixe modelos prontos. Adicione tarefas, escolha uma cor e exporte em PDF ou JPG.',hero_browse:'Criar lista',hero_how:'Ver modelos',hero_note:'Grátis · Sem cadastro · PDF e JPG',stat_templates:'Modelos',stat_formats:'Formatos (PDF e JPG)',stat_free:'Grátis',stat_login:'Sem login',how_cta:'Abrir o criador',tpl_viewall:'Ver todos',cta_title:'Pronto para criar sua lista?',cta_sub:'Use o criador de listas grátis online.',cta_btn:'Criar lista',foot_product:'Produto',foot_categories:'Categorias',foot_legal:'Legal',foot_about:'Sobre'},
+          de:{nav_templates:'Vorlagen',nav_blog:'Blog',nav_maker:'Vorlagen-Ersteller',nav_make:'Checkliste erstellen',hero_title:'Checklisten-Vorlagen-Ersteller — Online & kostenlos',hero_lead:'Erstellen Sie Ihre eigene Checkliste in Sekunden oder laden Sie fertige Vorlagen herunter. Aufgaben hinzufügen, Farbe wählen und als PDF oder JPG exportieren.',hero_browse:'Checkliste erstellen',hero_how:'Vorlagen ansehen',hero_note:'Kostenlos · Ohne Anmeldung · PDF & JPG',stat_templates:'Vorlagen',stat_formats:'Formate (PDF & JPG)',stat_free:'Kostenlos',stat_login:'Kein Login',how_cta:'Ersteller öffnen',tpl_viewall:'Alle ansehen',cta_title:'Bereit für Ihre Checkliste?',cta_sub:'Nutzen Sie den kostenlosen Online-Ersteller.',cta_btn:'Checkliste erstellen',foot_product:'Produkt',foot_categories:'Kategorien',foot_legal:'Rechtliches',foot_about:'Über uns'},
+          ar:{nav_templates:'القوالب',nav_blog:'المدونة',nav_maker:'منشئ القوالب',nav_make:'إنشاء قائمة',hero_title:'منشئ قوالب قوائم التحقق — عبر الإنترنت ومجاني',hero_lead:'أنشئ قائمة التحقق الخاصة بك في ثوانٍ أو نزّل قوالب جاهزة. أضف المهام واختر لونًا وصدّرها بصيغة PDF أو JPG.',hero_browse:'إنشاء قائمة',hero_how:'تصفح القوالب',hero_note:'مجاني · بدون تسجيل · PDF و JPG',stat_templates:'القوالب',stat_formats:'الصيغ (PDF و JPG)',stat_free:'مجاني',stat_login:'بدون تسجيل',how_cta:'افتح المنشئ',tpl_viewall:'عرض الكل',cta_title:'هل أنت مستعد لإنشاء قائمتك؟',cta_sub:'استخدم منشئ القوائم المجاني عبر الإنترنت.',cta_btn:'إنشاء قائمة',foot_product:'المنتج',foot_categories:'الفئات',foot_legal:'قانوني',foot_about:'من نحن'},
+          zh:{nav_templates:'模板',nav_blog:'博客',nav_maker:'模板生成器',nav_make:'创建清单',hero_title:'清单模板生成器 — 在线且免费',hero_lead:'几秒钟创建你自己的清单，或下载现成模板。添加任务、选择颜色，并导出为 PDF 或 JPG。',hero_browse:'创建清单',hero_how:'浏览模板',hero_note:'永久免费 · 无需注册 · PDF 和 JPG',stat_templates:'模板',stat_formats:'格式（PDF 和 JPG）',stat_free:'免费',stat_login:'无需登录',how_cta:'打开生成器',tpl_viewall:'查看全部',cta_title:'准备好创建你的清单了吗？',cta_sub:'使用免费的在线清单生成器。',cta_btn:'创建清单',foot_product:'产品',foot_categories:'分类',foot_legal:'法律',foot_about:'关于'}
         };
-        var LANGS = [['en','English'],['hi','हिन्दी'],['es','Español'],['fr','Français']];
+        var LANGS = [['en','English'],['hi','हिन्दी'],['bn','বাংলা'],['ta','தமிழ்'],['es','Español'],['fr','Français'],['pt','Português'],['de','Deutsch'],['ar','العربية'],['zh','中文']];
+        var RTL = {ar:1};
         function detect(){ try{ var s=localStorage.getItem('lang'); if(s) return s; }catch(e){} var n=(navigator.language||'en').slice(0,2).toLowerCase(); return DICT[n]?n:'en'; }
+        window.__lang = 'en';
+        window.__t = function(k,f){ var d=DICT[window.__lang]||DICT.en; return (d[k]!=null?d[k]:(DICT.en[k]!=null?DICT.en[k]:(f||k))); };
         function apply(lang){
-          var d=DICT[lang]||DICT.en;
+          window.__lang = lang; var d=DICT[lang]||DICT.en;
           document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var v=(d[k]!=null?d[k]:DICT.en[k]); if(v!=null) el.textContent=v; });
-          document.documentElement.lang=lang;
+          document.querySelectorAll('[data-i18n-ph]').forEach(function(el){ var k=el.getAttribute('data-i18n-ph'); var v=(d[k]!=null?d[k]:DICT.en[k]); if(v!=null) el.setAttribute('placeholder',v); });
+          document.documentElement.lang=lang; document.documentElement.dir = RTL[lang]?'rtl':'ltr';
           try{localStorage.setItem('lang',lang);}catch(e){}
+          document.dispatchEvent(new CustomEvent('langchange'));
         }
         var cur=detect();
         var sel=document.getElementById('langSelect');
         if(sel){ sel.innerHTML=LANGS.map(function(l){return '<option value="'+l[0]+'"'+(l[0]===cur?' selected':'')+'>'+l[1]+'</option>';}).join(''); sel.addEventListener('change',function(){apply(sel.value);}); }
         apply(cur);
 
-        /* scroll reveal */
         var els=document.querySelectorAll('.reveal');
         if(!('IntersectionObserver' in window)||!els.length){ els.forEach(function(e){e.classList.add('in');}); }
         else { var io=new IntersectionObserver(function(en){en.forEach(function(x){ if(x.isIntersecting){x.target.classList.add('in'); io.unobserve(x.target);} });},{threshold:.12,rootMargin:'0px 0px -40px 0px'}); els.forEach(function(e){io.observe(e);}); }
-=======
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <SEO {...props} />
-  </head>
-  <body>
-    <Nav />
-    <main>
-      <slot />
-    </main>
-    <Footer />
-
-    <!-- Scroll reveal (respects reduced-motion) -->
-    <script is:inline>
-      (function () {
-        const els = document.querySelectorAll('.reveal');
-        if (!('IntersectionObserver' in window) || !els.length) {
-          els.forEach((e) => e.classList.add('in'));
-          return;
-        }
-        const io = new IntersectionObserver((entries) => {
-          entries.forEach((en) => {
-            if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
-          });
-        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-        els.forEach((e) => io.observe(e));
->>>>>>> 84701c2dd4a31b5b83cf2c397cc9c32f7cf25b9d
       })();
     </script>
   </body>

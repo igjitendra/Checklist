@@ -113,7 +113,7 @@ const faqJsonLd = { '@context':'https://schema.org','@type':'FAQPage', mainEntit
     .sheet{background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);width:100%;max-width:520px;aspect-ratio:1/1.414;padding:50px 52px;display:flex;flex-direction:column;overflow:hidden;}
     .sheet[data-font=sans]{font-family:system-ui,Arial,sans-serif;} .sheet[data-font=serif]{font-family:Georgia,'Times New Roman',serif;} .sheet[data-font=rounded]{font-family:'Trebuchet MS','Segoe UI',sans-serif;} .sheet[data-font=hand]{font-family:'Caveat','Kalam',cursive;}
     .sh-title{text-align:center;font-size:50px;font-weight:800;letter-spacing:-1px;color:#222;line-height:1;word-break:break-word;}
-    .sh-sub{text-align:center;font-size:32px;font-weight:700;color:#222;margin-top:2px;}
+    .sh-sub{text-align:center;font-family:'Caveat','Kalam',cursive;font-size:46px;font-weight:700;color:#222;margin-top:0;line-height:1;}
     .sh-underline{width:150px;height:7px;border-radius:4px;margin:14px auto 26px;}
     #shBody{flex:1;}
     @media print{.nav,.footer,.editor,.no-print,.eyebrow,.prose,.sec-head,.faq,section+section{display:none !important;}.sheet{box-shadow:none;border:none;max-width:none;}@page{size:A4;margin:14mm;}}
@@ -179,10 +179,10 @@ const faqJsonLd = { '@context':'https://schema.org','@type':'FAQPage', mainEntit
 
     async function downloadJPG(){
       const W=1000,H=1414,c=document.createElement('canvas'); c.width=W;c.height=H; const x=c.getContext('2d'); const fam=FONTS[state.font];
-      if(state.font==='hand'){ try{ await document.fonts.load(`700 90px 'Caveat'`); await document.fonts.ready; }catch(e){} }
+      try{ await document.fonts.load(`700 90px 'Caveat'`); if(state.font==='hand'){ await document.fonts.load(`700 90px 'Kalam'`); } await document.fonts.ready; }catch(e){}
       x.fillStyle='#fff'; x.fillRect(0,0,W,H);
       x.textAlign='center'; x.fillStyle='#222'; x.font=`800 90px ${fam}`; x.fillText(state.title||'', W/2, 140);
-      if(state.sub){ x.font=`700 58px ${fam}`; x.fillText(state.sub, W/2, 212); }
+      if(state.sub){ x.font=`700 72px 'Caveat', cursive`; x.fillText(state.sub, W/2, 218); }
       x.strokeStyle=state.accent; x.lineWidth=11; x.lineCap='round'; x.beginPath(); x.moveTo(W/2-140,258); x.lineTo(W/2+140,264); x.stroke();
       const two=state.layout==='two';
       let rows=0; state.sections.forEach(s=>{ rows+=(s.title?1:0)+(two?Math.ceil(s.items.length/2):s.items.length); });
