@@ -1,0 +1,85 @@
+---
+// Gated download form. User must fill this before the template file is released.
+// On submit -> POST /api/download -> (Turnstile verify + log to Google Sheet) -> returns file URL.
+export interface Props {
+  fileKey: string;
+  templateTitle: string;
+}
+const { fileKey, templateTitle } = Astro.props;
+// Cloudflare Turnstile site key (public). Set in .env as PUBLIC_TURNSTILE_SITEKEY.
+const TURNSTILE_SITEKEY = import.meta.env.PUBLIC_TURNSTILE_SITEKEY || '1x00000000000000000000AA';
+---
+<div class="dl-wrap">
+  <div class="form-card">
+    <h3 style="font-size:20px;font-weight:800;">Download this template</h3>
+    <p class="muted" style="font-size:14px;margin:6px 0 18px;">Fill in your details to get the <strong>{templateTitle}</strong> (free PDF).</p>
+    <form id="dlForm" data-filekey={fileKey}>
+      <div class="field">
+        <label for="name">Full name *</label>
+        <input id="name" name="name" type="text" required autocomplete="name" />
+      </div>
+      <div class="field">
+        <label for="email">Email address *</label>
+        <input id="email" name="email" type="email" required autocomplete="email" />
+      </div>
+      <div class="field">
+        <label for="purpose">What will you use it for?</label>
+        <select id="purpose" name="purpose">
+          <option value="personal">Personal use</option>
+          <option value="work">Work / business</option>
+          <option value="education">Education</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <!-- Cloudflare Turnstile (bot protection) -->
+      <div class="cf-turnstile" data-sitekey={TURNSTILE_SITEKEY} style="margin:6px 0 14px;"></div>
+      <button type="submit" class="btn btn-primary btn-block" id="dlBtn">⬇ Get free download</button>
+      <p class="form-msg" id="dlMsg"></p>
+      <p class="muted" style="font-size:12px;margin-top:6px;">We respect your privacy. No spam — unsubscribe anytime.</p>
+    </form>
+  </div>
+</div>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+  const form = document.getElementById('dlForm');
+  const msg = document.getElementById('dlMsg');
+  const btn = document.getElementById('dlBtn');
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    msg.className = 'form-msg';
+    msg.textContent = '';
+    const data = {
+      name: form.name.value.trim(),
+      email: form.email.value.trim(),
+      purpose: form.purpose.value,
+      fileKey: form.dataset.filekey,
+      template: document.title,
+      turnstile: (form.querySelector('[name="cf-turnstile-response"]') || {}).value || '',
+    };
+    if (!data.name || !data.email) { msg.className='form-msg err'; msg.textContent='Please fill name and email.'; return; }
+    btn.disabled = true; btn.textContent = 'Please wait…';
+    try {
+      const res = await fetch('/api/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const out = await res.json();
+      if (res.ok && out.url) {
+        msg.className = 'form-msg ok';
+        msg.textContent = '✅ Success! Your download is starting…';
+        window.location.href = out.url;
+      } else {
+        msg.className = 'form-msg err';
+        msg.textContent = out.error || 'Something went wrong. Please try again.';
+      }
+    } catch (err) {
+      msg.className = 'form-msg err';
+      msg.textContent = 'Network error. Please try again.';
+    } finally {
+      btn.disabled = false; btn.textContent = '⬇ Get free download';
+      if (window.turnstile) window.turnstile.reset();
+    }
+  });
+</script>
