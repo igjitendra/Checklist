@@ -34,10 +34,10 @@ export const site = {
 
   // --- Social links (leave '' to hide) ---
   social: {
-    instagram: 'https://instagram.com/jitendrauno,
-    whatsapp: 'https://whatsapp.com/channel/your_channel',
-    telegram: 'https://t.me/igjitendra,
-    youtube: 'https://youtube.com/@jitendrauno,
+    instagram: 'https://instagram.com/jitendrauno',
+    whatsapp: 'https://whatsapp.com/channel/0029VbDHgiR0AgWBYCOkKO0F',
+    telegram: 'https://t.me/igjitendra',
+    youtube: 'https://youtube.com/@jitendrauno',
   },
 
   // --- "Follow to unlock" tasks for PRO template downloads ---
