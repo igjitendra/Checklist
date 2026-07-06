@@ -1,4 +1,3 @@
-
 /**
  * Google Apps Script — Lead capture webhook for the Checklist site.
  *
