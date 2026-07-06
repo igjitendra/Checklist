@@ -24,7 +24,7 @@ export const site = {
     'Free checklist template maker online. Create your own checklist and download ready-made templates as PDF & JPG.',
 
   // --- Contact (optional, shown in footer if set) ---
-  email: 'palcscuno@gmail.com,
+  email: 'palcscuno@gmail.com',
 
   // --- Footer credit (change to your brand / name) ---
   credit: {
