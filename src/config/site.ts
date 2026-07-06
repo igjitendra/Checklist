@@ -45,7 +45,7 @@ export const site = {
   // of these before the download button unlocks.
   followTasks: [
     { id: 'instagram', label: 'Follow us on Instagram', url: 'https://instagram.com/jitendrauno', icon: '📸' },
-    { id: 'whatsapp', label: 'Join our WhatsApp channel', url: 'https://whatsapp.com/channel/jitendrauno', icon: '💬' },
+    { id: 'whatsapp', label: 'Join our WhatsApp channel', url: 'https://whatsapp.com/channel/0029VbDHgiR0AgWBYCOkKO0F', icon: '💬' },
     { id: 'telegram', label: 'Join our Telegram', url: 'https://t.me/jitendrauno', icon: '✈️' },
     { id: 'youtube', label: 'Subscribe on YouTube', url: 'https://youtube.com/@jitendrauno', icon: '▶️' },
   ] as FollowTask[],
