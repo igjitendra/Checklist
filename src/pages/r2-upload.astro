@@ -1,1 +1,197 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+// PRIVATE admin tool — NOT linked anywhere. Open manually: /r2-upload
+---
 
+<BaseLayout title="R2 Upload (Admin)" description="Private R2 uploader for checklist template files." noindex={true}>
+  <section style="padding-top:42px;">
+    <div class="container">
+      <div class="center" style="max-width:760px;margin:0 auto 28px;">
+        <span class="eyebrow">Admin tool</span>
+        <h1 style="font-size:34px;font-weight:800;margin-top:8px;">R2 Template File Upload</h1>
+        <p class="muted" style="margin-top:10px;">
+          Upload template PDF/JPG files directly to Cloudflare R2.
+          Then upload the generated <code>.md</code> file to GitHub manually.
+        </p>
+      </div>
+
+      <div class="tool-wrap">
+        <div class="tool-card">
+          <h3 style="font-size:15px;font-weight:800;margin-bottom:14px;">Upload details</h3>
+
+          <div class="field">
+            <label>Admin upload key *</label>
+            <input id="adminKey" type="password" placeholder="Enter ADMIN_UPLOAD_KEY" autocomplete="off" />
+            <div class="path-note">
+              This key must match the <code>ADMIN_UPLOAD_KEY</code> secret in Cloudflare Pages.
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Template slug / fileBase *</label>
+            <input id="fileBase" type="text" placeholder="branding-checklist" />
+            <div class="path-note">
+              Use the same value as template markdown <code>fileBase</code>.
+              Example: <code>branding-checklist</code>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>File type *</label>
+            <select id="fileType">
+              <option value="pdf">PDF — downloadable printable file</option>
+              <option value="jpg">JPG — downloadable image file</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Select file *</label>
+            <input id="fileInput" type="file" accept=".pdf,.jpg,.jpeg,application/pdf,image/jpeg" />
+          </div>
+
+          <button class="btn btn-cta" id="uploadBtn" type="button">Upload to R2</button>
+          <p id="msg" class="form-msg" style="margin-top:12px;"></p>
+
+          <div class="tool-note">
+            <strong>Upload rules:</strong><br />
+            PDF will be stored as <code>&lt;slug&gt;.pdf</code><br />
+            JPG will be stored as <code>&lt;slug&gt;.jpg</code><br />
+            Example: <code>branding-checklist.pdf</code>, <code>branding-checklist.jpg</code>
+          </div>
+        </div>
+
+        <div class="tool-out">
+          <div class="tool-actions">
+            <button class="btn btn-ghost btn-sm" id="copyMd" type="button">Copy template frontmatter</button>
+          </div>
+
+          <pre id="preview">Enter slug to preview file names.</pre>
+
+          <div class="tool-note">
+            After uploading files to R2:<br />
+            1) Open <code>/template-writer</code><br />
+            2) Generate the template <code>.md</code><br />
+            3) Upload that <code>.md</code> to <code>src/content/templates/</code> in GitHub<br />
+            4) Cloudflare will redeploy and template will go live.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const $ = (s) => document.querySelector(s);
+
+    function slugify(s) {
+      return (s || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+    }
+
+    function currentSlug() {
+      return slugify($('#fileBase').value);
+    }
+
+    function render() {
+      const slug = currentSlug() || 'your-template-slug';
+
+      $('#preview').textContent =
+`R2 object names:
+${slug}.pdf
+${slug}.jpg
+
+Template markdown values:
+fileBase: "${slug}"
+preview: "/templates/preview/${slug}.webp"
+
+Important:
+PDF/JPG upload यहां R2 में होगा.
+Preview thumbnail अभी GitHub में रखना होगा:
+public/templates/preview/${slug}.webp`;
+    }
+
+    async function upload() {
+      const msg = $('#msg');
+      msg.className = 'form-msg';
+      msg.textContent = '';
+
+      const adminKey = $('#adminKey').value.trim();
+      const fileBase = currentSlug();
+      const fileType = $('#fileType').value;
+      const file = $('#fileInput').files[0];
+
+      if (!adminKey) {
+        msg.className = 'form-msg err';
+        msg.textContent = 'Admin key is required.';
+        return;
+      }
+
+      if (!fileBase) {
+        msg.className = 'form-msg err';
+        msg.textContent = 'Template slug/fileBase is required.';
+        return;
+      }
+
+      if (!file) {
+        msg.className = 'form-msg err';
+        msg.textContent = 'Please select a file.';
+        return;
+      }
+
+      const fd = new FormData();
+      fd.append('adminKey', adminKey);
+      fd.append('fileBase', fileBase);
+      fd.append('fileType', fileType);
+      fd.append('file', file);
+
+      $('#uploadBtn').disabled = true;
+      $('#uploadBtn').textContent = 'Uploading...';
+
+      try {
+        const res = await fetch('/api/r2-upload', {
+          method: 'POST',
+          body: fd,
+        });
+
+        const out = await res.json();
+
+        if (res.ok && out.ok) {
+          msg.className = 'form-msg ok';
+          msg.textContent = 'Uploaded successfully: ' + out.key;
+        } else {
+          msg.className = 'form-msg err';
+          msg.textContent = out.error || 'Upload failed.';
+        }
+      } catch (e) {
+        msg.className = 'form-msg err';
+        msg.textContent = 'Network/server error. Check Cloudflare deployment, R2 binding, and ADMIN_UPLOAD_KEY.';
+      } finally {
+        $('#uploadBtn').disabled = false;
+        $('#uploadBtn').textContent = 'Upload to R2';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      $('#fileBase').addEventListener('input', render);
+      $('#fileType').addEventListener('change', render);
+      $('#uploadBtn').addEventListener('click', upload);
+
+      $('#copyMd').addEventListener('click', async () => {
+        const slug = currentSlug() || 'your-template-slug';
+        const text =
+`fileBase: "${slug}"
+preview: "/templates/preview/${slug}.webp"`;
+
+        try {
+          await navigator.clipboard.writeText(text);
+          $('#copyMd').textContent = 'Copied!';
+          setTimeout(() => $('#copyMd').textContent = 'Copy template frontmatter', 1200);
+        } catch (e) {}
+      });
+
+      render();
+    });
+  </script>
+</BaseLayout>
